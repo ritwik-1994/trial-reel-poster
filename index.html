@@ -164,22 +164,58 @@
   .seg button[aria-pressed=true] { background:var(--panel-2); color:var(--bone); }
   .toolbar select { background:var(--night); border:1px solid var(--line-2); border-radius:10px; padding:8px 10px; color-scheme:dark; }
   .toolbar .grow { flex:1; }
-  .reel { display:grid; grid-template-columns:96px 1fr; gap:16px; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); margin-bottom:12px; }
-  .reel img, .reel .noimg { width:96px; aspect-ratio:9/16; object-fit:cover; border-radius:8px; background:#000; display:block; }
-  @media (max-width:640px) { .reel { grid-template-columns:72px 1fr; } .reel img, .reel .noimg { width:72px; } }
-  .reel .t { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .badge { font-size:12px; padding:2px 8px; border-radius:99px; border:1px solid var(--line-2); color:var(--dim); white-space:nowrap; }
+  .bench { display:grid; grid-template-columns:repeat(auto-fit, minmax(118px, 1fr)); gap:8px; margin-bottom:8px; }
+  .bench div { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .bench b { display:block; font-size:18px; font-variant-numeric:tabular-nums; }
+  .bench span { font-size:12px; color:var(--dim); }
+  .legend { font-size:13px; color:var(--dim); margin:0 0 14px; display:flex; gap:14px; flex-wrap:wrap; }
+  .up { color:var(--ok); } .down { color:var(--bad); }
+  .lowreach { opacity:.55; }
+  details.explain { font-size:14px; color:var(--dim); margin-bottom:14px; }
+  details.explain summary { cursor:pointer; color:var(--jal); }
+  .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--panel); }
+  table.reels { border-collapse:collapse; width:100%; min-width:980px; font-size:14px; }
+  table.reels th { position:sticky; top:0; background:var(--panel-2); text-align:right; font-weight:600; font-size:12px; color:var(--dim); padding:10px 10px; white-space:nowrap; cursor:pointer; user-select:none; border-bottom:1px solid var(--line-2); }
+  table.reels th:first-child, table.reels td:first-child { text-align:left; }
+  table.reels th[aria-sort] { color:var(--bone); }
+  table.reels th[aria-sort=descending]::after { content:" ↓"; } table.reels th[aria-sort=ascending]::after { content:" ↑"; }
+  table.reels td { padding:10px; border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; vertical-align:middle; }
+  table.reels tr:last-child td { border-bottom:0; }
+  table.reels tbody tr { cursor:pointer; }
+  table.reels tbody tr:hover { background:rgba(255,255,255,.03); }
+  .rcell { display:flex; gap:10px; align-items:center; min-width:240px; max-width:320px; }
+  .rcell img, .rcell .noimg { width:36px; aspect-ratio:9/16; object-fit:cover; border-radius:4px; background:#000; flex:none; }
+  .rcell .t { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rcell .d { font-size:12px; color:var(--mute); display:flex; gap:6px; align-items:center; }
+  .badge { font-size:11px; padding:1px 7px; border-radius:99px; border:1px solid var(--line-2); color:var(--dim); white-space:nowrap; }
   .badge.trial { border-color:var(--agni); color:var(--agni); }
   .badge.maybe { border-style:dashed; }
-  .metrics { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin:10px 0; }
+  .todo-chip { font-size:12px; padding:2px 8px; border-radius:99px; background:var(--panel-2); color:var(--warn); }
+  .todo-chip.done { color:var(--ok); }
+  .cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+  .rcard { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:12px; cursor:pointer; display:flex; flex-direction:column; gap:10px; }
+  .rcard:hover { border-color:var(--line-2); }
+  .rcard .top { display:grid; grid-template-columns:64px 1fr; gap:10px; }
+  .rcard img, .rcard .noimg { width:64px; aspect-ratio:9/16; object-fit:cover; border-radius:6px; background:#000; }
+  .rcard .t { font-weight:700; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .mini { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
+  .mini div { background:var(--night); border-radius:8px; padding:5px 8px; }
+  .mini b { display:block; font-size:15px; font-variant-numeric:tabular-nums; }
+  .mini span { font-size:11px; color:var(--dim); }
+  /* reel detail */
+  #reelDlg { width:min(760px, calc(100vw - 32px)); }
+  .detail { display:grid; grid-template-columns:140px 1fr; gap:18px; }
+  @media (max-width:600px) { .detail { grid-template-columns:1fr; } .detail > img, .detail > .noimg { max-width:140px; } }
+  .detail > img, .detail > .noimg { width:140px; aspect-ratio:9/16; object-fit:cover; border-radius:10px; background:#000; }
+  .dgroup { font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--dim); margin:14px 0 6px; font-weight:700; }
+  .metrics { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; }
   @media (max-width:520px) { .metrics { grid-template-columns:repeat(2, minmax(0,1fr)); } }
-  .metric { background:var(--night); border-radius:8px; padding:6px 10px; }
+  .metric { background:var(--night); border-radius:8px; padding:7px 10px; }
   .metric b { display:block; font-size:17px; font-variant-numeric:tabular-nums; }
-  .metric span { font-size:12px; color:var(--dim); }
-  .reel .row2 { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  .tasks { margin-top:10px; border-top:1px solid var(--line); padding-top:10px; }
-  .tasks .head { font-size:13px; color:var(--dim); margin-bottom:6px; }
-  .task { display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; padding:4px 0; cursor:pointer; font-size:14px; }
+  .metric span { font-size:12px; color:var(--dim); display:block; }
+  .metric small { font-size:11px; }
+  .metric b span, .mini b span { display:inline; font-size:inherit; }
+  .task { display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; padding:6px 0; cursor:pointer; font-size:14px; }
   .task input { accent-color:var(--ok); width:16px; height:16px; margin-top:3px; }
   .task small { display:block; color:var(--mute); font-size:12px; }
   .task input:checked ~ span b { text-decoration:line-through; color:var(--mute); }
@@ -232,20 +268,24 @@
         <button data-f="trial" aria-pressed="false">Trial reels</button>
         <button data-f="grid" aria-pressed="false">On profile grid</button>
       </div>
-      <label class="help" style="margin:0">Sort <select id="reelSort" aria-label="Sort reels">
-        <option value="new">Newest first</option><option value="views">Most views</option><option value="reach">Most reach</option>
-        <option value="watch">Longest average watch</option><option value="shares">Most shares</option><option value="saved">Most saves</option>
-      </select></label>
+      <div class="seg" role="group" aria-label="Layout">
+        <button data-v="table" aria-pressed="true">Table</button>
+        <button data-v="cards" aria-pressed="false">Cards</button>
+      </div>
+      <label class="help" style="margin:0">Sort <select id="reelSort" aria-label="Sort reels"></select></label>
       <span class="grow"></span>
       <span class="help" id="reelsUpdated" style="margin:0"></span>
       <button class="btn small secondary" id="reelsRefresh">Refresh numbers</button>
     </div>
-    <div class="banner" style="font-size:14px"><span class="dot warn" style="margin-top:7px"></span><div>
-      <b>How trial reels are marked</b>Instagram doesn't tell apps which reels are trials. <b style="display:inline;color:var(--agni)">Trial</b> means it was posted from this app as a trial.
-      <b style="display:inline">Probably trial</b> means it isn't on the profile grid, which is true of trial reels but also of reels someone chose to keep off the grid.
-      Numbers come from Instagram and refresh every 30 minutes.</div></div>
+    <div class="bench" id="bench"></div>
+    <div class="legend" id="legend"></div>
+    <details class="explain"><summary>What these numbers mean</summary>
+      <p><b>Rates are per account reached.</b> Like % = likes ÷ accounts reached. Same for Comment %, Share % and Save %. Engagement % = (likes + comments + shares + saves) ÷ accounts reached. <b>Views per person</b> above 1.0 means people watched it more than once.</p>
+      <p><b>Compared with this account.</b> Each rate is compared with the median of the reels loaded here. <span class="up">▲</span> means at least 25% better than usual, <span class="down">▼</span> means at least 25% worse. Reels that reached fewer than 100 accounts are faded and left out of the medians, because a few people can swing the rates a lot.</p>
+      <p><b>Trial labels.</b> Instagram doesn't tell apps which reels are trials. <b>Trial</b> means it was posted from this app as a trial. <b>Probably trial</b> means it isn't on the profile grid, which is true of trial reels but also of reels kept off the grid on purpose.</p>
+    </details>
     <div id="reels-list"></div>
-    <div style="text-align:center;margin-top:8px"><button class="btn secondary" id="reelsMore" hidden>Load older reels</button></div>
+    <div style="text-align:center;margin-top:12px"><button class="btn secondary" id="reelsMore" hidden>Load older reels</button></div>
   </section>
 
   <section id="viewQueue" role="tabpanel" aria-labelledby="tabQueue" hidden>
@@ -289,6 +329,12 @@
     <button class="btn secondary" id="reviewBack">Back to editing</button>
     <button class="btn primary" id="reviewGo">Queue reels</button>
   </div>
+</dialog>
+
+<dialog id="reelDlg">
+  <div class="dlg-head" style="display:flex;gap:10px;align-items:flex-start"><div style="flex:1;min-width:0"><h3 id="reelDlgTitle">reel</h3><p id="reelDlgSub"></p></div>
+    <button class="iconbtn" onclick="this.closest('dialog').close()" aria-label="Close">Close</button></div>
+  <div class="dlg-body" id="reelDlgBody" style="max-height:72vh"></div>
 </dialog>
 
 <dialog id="loginDlg">
@@ -368,7 +414,7 @@ $('helpBtn').onclick = () => $('helpDlg').showModal();
 // The page can be opened from a local engine (same origin) or from GitHub Pages. On Pages it looks up the
 // engine's current address in config.json, which the engine rewrites every time its tunnel restarts.
 const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
-const CONFIG_URL = 'https://api.github.com/repos/ritwik-turing/trial-reel-poster/contents/config.json';
+const CONFIG_URL = 'https://api.github.com/repos/ritwik-1994/trial-reel-poster/contents/config.json';
 const API_OVERRIDE = new URLSearchParams(location.search).get('api');   // for testing against another engine
 let API = API_OVERRIDE ?? (LOCAL ? '' : null), session = store.get('session', '');
 async function findEngine() {
@@ -818,15 +864,57 @@ $('queue').addEventListener('click', async e => {
   }
 });
 /* ===================== all reels & insights ===================== */
-const reels = { list: [], after: null, loaded: false, filter: 'all', sort: 'new', fetchedAt: 0 };
+const reels = { list: [], after: null, loaded: false, filter: 'all', sort: 'new', dir: -1, view: store.get('reelsView', 'table'), fetchedAt: 0, open: null };
 const TASK_INFO = {
   shared_to_followers: ['Share to followers', 'Only for trial reels you want everyone to see. In the Instagram app, open the reel and tap "Share to followers".'],
   likes_hidden: ['Hide like count', 'In the Instagram app, open the reel, tap ⋯ and choose "Hide like count". The same menu has "Unhide like count".'],
   translations: ['Translations', 'In the Instagram app, open the reel, tap ⋯ and look for Translations. Instagram only offers it on some reels and in some regions.'],
 };
-const fmtNum = n => n == null ? '–' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(n);
+const MIN_REACH = 100;
+// Column / metric definitions: value getter, formatter, whether it's compared with the account median
+const pct = x => x == null ? '–' : (x * 100).toFixed(x < 0.01 ? 2 : 1) + '%';
+const fmtNum = n => n == null ? '–' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n));
 const fmtSec = ms => ms == null ? '–' : (ms / 1000).toFixed(1) + ' s';
 const fmtHours = ms => ms == null ? '–' : ms >= 3600e3 ? (ms / 3600e3).toFixed(1) + ' h' : Math.round(ms / 60e3) + ' min';
+const per = (m, k) => m && m.reach ? (m[k] ?? 0) / m.reach : null;
+const COLS = [
+  { k: 'new',      label: 'Posted',          get: r => Date.parse(r.timestamp) },
+  { k: 'views',    label: 'Views',           get: r => r.insights?.views, fmt: fmtNum, bench: true },
+  { k: 'reach',    label: 'Reached',         get: r => r.insights?.reach, fmt: fmtNum, bench: true },
+  { k: 'watch',    label: 'Avg watch',       get: r => r.insights?.ig_reels_avg_watch_time, fmt: fmtSec, bench: true, cmp: true },
+  { k: 'vpp',      label: 'Views / person',  get: r => per(r.insights, 'views'), fmt: x => x == null ? '–' : x.toFixed(2), cmp: true },
+  { k: 'like',     label: 'Like %',          get: r => per(r.insights, 'likes'), fmt: pct, bench: true, cmp: true },
+  { k: 'comment',  label: 'Comment %',       get: r => per(r.insights, 'comments'), fmt: pct, cmp: true },
+  { k: 'share',    label: 'Share %',         get: r => per(r.insights, 'shares'), fmt: pct, bench: true, cmp: true },
+  { k: 'save',     label: 'Save %',          get: r => per(r.insights, 'saved'), fmt: pct, bench: true, cmp: true },
+  { k: 'eng',      label: 'Engagement %',    get: r => per(r.insights, 'total_interactions'), fmt: pct, bench: true, cmp: true },
+];
+const col = k => COLS.find(c => c.k === k);
+const median = xs => { const a = xs.filter(x => x != null && !isNaN(x)).sort((p, q) => p - q); if (!a.length) return null; const h = a.length >> 1; return a.length % 2 ? a[h] : (a[h - 1] + a[h]) / 2; };
+let medians = {};
+function computeMedians() {
+  const base = reels.list.filter(r => (r.insights?.reach || 0) >= MIN_REACH);
+  medians = Object.fromEntries(COLS.filter(c => c.fmt).map(c => [c.k, median(base.map(c.get))]));
+  medians._n = base.length;
+}
+function vsMedian(c, r) {      // ▲ / ▼ marker against this account's usual
+  const v = c.get(r), md = medians[c.k];
+  if (!c.cmp || v == null || !md || (r.insights?.reach || 0) < MIN_REACH) return '';
+  const ratio = v / md;
+  return ratio >= 1.25 ? ' <span class="up" title="' + Math.round((ratio - 1) * 100) + '% above usual">▲</span>'
+       : ratio <= 0.75 ? ' <span class="down" title="' + Math.round((1 - ratio) * 100) + '% below usual">▼</span>' : '';
+}
+const badgeFor = r => r.trial === 'yes' ? `<span class="badge trial">Trial${r.graduation === 'SS_PERFORMANCE' ? ' · auto-share' : ''}</span>`
+  : r.trial === 'maybe' ? `<span class="badge maybe" title="Not on the profile grid">Probably trial</span>` : `<span class="badge">On grid</span>`;
+const taskKeys = r => r.trial === 'no' ? ['likes_hidden', 'translations'] : ['shared_to_followers', 'likes_hidden', 'translations'];
+function todoChip(r) {
+  const keys = taskKeys(r), left = keys.filter(k => !r.tasks?.[k]).length;
+  return left ? `<span class="todo-chip" title="Things to do in the Instagram app">${left} to do</span>` : `<span class="todo-chip done">✓ done</span>`;
+}
+const thumb = r => r.thumbnail_url ? `<img src="${esc(r.thumbnail_url)}" alt="" loading="lazy">` : '<div class="noimg"></div>';
+
+// sort dropdown mirrors the table headers
+$('reelSort').innerHTML = COLS.map(c => `<option value="${c.k}">${c.k === 'new' ? 'Newest first' : 'Highest ' + c.label}</option>`).join('');
 
 async function loadReels(more, refresh) {
   $('reelsRefresh').disabled = true;
@@ -837,6 +925,7 @@ async function loadReels(more, refresh) {
     if (r.error) throw new Error(r.error);
     reels.list = more ? reels.list.concat(r.reels) : r.reels;
     reels.after = r.after; reels.loaded = true; reels.fetchedAt = Date.now();
+    if (refresh) toast('Numbers refreshed from Instagram');
   } catch (e) {
     if (e.message !== 'login') $('reels-list').innerHTML = `<div class="empty" style="color:var(--bad)">Couldn't load reels from Instagram. ${esc(humanError(e.message))}</div>`;
     $('reelsRefresh').disabled = false; return;
@@ -844,62 +933,99 @@ async function loadReels(more, refresh) {
   $('reelsRefresh').disabled = false;
   renderReels();
 }
-function reelCard(r) {
-  const m = r.insights || {}, cap = esc((r.caption || '').split('\n')[0] || '(no caption)');
-  const badge = r.trial === 'yes' ? `<span class="badge trial">Trial${r.graduation === 'SS_PERFORMANCE' ? ' · auto-share on' : ''}</span>`
-              : r.trial === 'maybe' ? `<span class="badge maybe" title="Not on the profile grid">Probably trial</span>` : `<span class="badge">On profile grid</span>`;
-  const shareRate = m.reach ? ((m.shares || 0) / m.reach * 100).toFixed(1) + '%' : '–';
-  const metrics = m.error ? `<div class="msg warn">Insights unavailable for this reel: ${esc(humanError(m.error))}</div>` : `
-    <div class="metrics">
-      <div class="metric"><b>${fmtNum(m.views)}</b><span>Views</span></div>
-      <div class="metric"><b>${fmtNum(m.reach)}</b><span>Accounts reached</span></div>
-      <div class="metric"><b>${fmtSec(m.ig_reels_avg_watch_time)}</b><span>Average watch</span></div>
-      <div class="metric"><b>${fmtHours(m.ig_reels_video_view_total_time)}</b><span>Total watch time</span></div>
-      <div class="metric"><b>${fmtNum(m.likes)}</b><span>Likes</span></div>
-      <div class="metric"><b>${fmtNum(m.comments)}</b><span>Comments</span></div>
-      <div class="metric"><b>${fmtNum(m.shares)}</b><span>Shares · ${shareRate} of reach</span></div>
-      <div class="metric"><b>${fmtNum(m.saved)}</b><span>Saves</span></div>
-    </div>`;
-  const taskKeys = r.trial === 'no' ? ['likes_hidden', 'translations'] : ['shared_to_followers', 'likes_hidden', 'translations'];
-  const tasks = taskKeys.map(k => {
-    const done = r.tasks?.[k];
-    return `<label class="task"><input type="checkbox" data-task="${k}" ${done ? 'checked' : ''}>
-      <span><b>${TASK_INFO[k][0]}</b>${done ? ` <small style="display:inline;color:var(--ok)">done ${esc(fmtWhen(new Date(done)))}</small>` : ''}<small>${TASK_INFO[k][1]}</small></span></label>`;
-  }).join('');
-  return `<article class="reel" data-id="${esc(r.id)}">
-    ${r.thumbnail_url ? `<img src="${esc(r.thumbnail_url)}" alt="" loading="lazy">` : '<div class="noimg"></div>'}
-    <div style="min-width:0">
-      <div class="row2"><div class="t" style="flex:1;min-width:0">${cap}</div>${badge}</div>
-      <div class="s" style="color:var(--dim);font-size:13px">Posted ${esc(fmtWhen(new Date(r.timestamp)))}${m.stale ? ' · showing last saved numbers' : ''}</div>
-      ${metrics}
-      <div class="row2">
-        <label class="switch" style="align-items:center"><input type="checkbox" data-act="comments" ${r.is_comment_enabled !== false ? 'checked' : ''}><span style="font-size:14px">Comments ${r.is_comment_enabled !== false ? 'on' : 'off'}</span></label>
-        <a class="btn small secondary" href="${esc(r.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">Open in Instagram ↗</a>
-      </div>
-      <div class="tasks"><div class="head">Only the Instagram app can do these. Tick them when done, and the ticks are shared with the whole team.</div>${tasks}</div>
-    </div></article>`;
-}
+
 function renderReels() {
-  const key = { views: 'views', reach: 'reach', watch: 'ig_reels_avg_watch_time', shares: 'shares', saved: 'saved' }[reels.sort];
+  computeMedians();
+  // benchmarks strip
+  $('bench').innerHTML = medians._n ? COLS.filter(c => c.bench).map(c => `<div><b>${c.fmt(medians[c.k])}</b><span>Usual ${c.label.toLowerCase()}</span></div>`).join('') : '';
+  $('legend').innerHTML = medians._n
+    ? `<span>"Usual" = median of ${medians._n} reels that reached ${MIN_REACH}+ accounts</span><span><span class="up">▲</span> 25%+ better than usual</span><span><span class="down">▼</span> 25%+ worse</span><span class="lowreach">Faded = under ${MIN_REACH} reached</span>`
+    : '';
+  const c = col(reels.sort);
   let list = reels.list.filter(r => reels.filter === 'all' || (reels.filter === 'trial' ? r.trial !== 'no' : r.trial === 'no'));
-  list = key ? [...list].sort((a, b) => (b.insights?.[key] ?? -1) - (a.insights?.[key] ?? -1)) : list;
-  $('reels-list').innerHTML = list.length ? list.map(reelCard).join('')
-    : `<div class="empty">No reels match this filter${reels.after ? ' yet. Try "Load older reels".' : '.'}</div>`;
+  list = [...list].sort((a, b) => {      // reels.dir -1 = highest first; missing values always last
+    const x = c.get(a), y = c.get(b);
+    if (x == null || y == null) return (x == null) - (y == null);
+    return (y - x) * -reels.dir;
+  });
+  $('reelSort').value = reels.sort;
+  document.querySelectorAll('.seg [data-v]').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === reels.view));
+  if (!list.length) {
+    $('reels-list').innerHTML = `<div class="empty">No reels match this filter${reels.after ? ' yet. Try "Load older reels".' : '.'}</div>`;
+  } else if (reels.view === 'table') {
+    $('reels-list').innerHTML = `<div class="tablewrap"><table class="reels"><thead><tr>
+      ${COLS.map(c => `<th data-sort="${c.k}" ${reels.sort === c.k ? `aria-sort="${reels.dir < 0 ? 'descending' : 'ascending'}"` : ''} scope="col">${c.k === 'new' ? 'Reel' : c.label}</th>`).join('')}
+      <th scope="col" style="cursor:default">In-app to-do</th></tr></thead><tbody>
+      ${list.map(r => `<tr data-id="${esc(r.id)}" class="${(r.insights?.reach || 0) < MIN_REACH ? 'lowreach' : ''}" tabindex="0">
+        <td><div class="rcell">${thumb(r)}<div style="min-width:0"><div class="t">${esc((r.caption || '').split('\n')[0] || '(no caption)')}</div>
+          <div class="d">${esc(new Date(r.timestamp).toLocaleDateString([], { day: 'numeric', month: 'short' }))} ${badgeFor(r)}</div></div></div></td>
+        ${COLS.slice(1).map(c => `<td>${c.fmt(c.get(r))}${vsMedian(c, r)}</td>`).join('')}
+        <td>${todoChip(r)}</td></tr>`).join('')}
+      </tbody></table></div>`;
+  } else {
+    $('reels-list').innerHTML = `<div class="cards">${list.map(r => `
+      <article class="rcard ${(r.insights?.reach || 0) < MIN_REACH ? 'lowreach' : ''}" data-id="${esc(r.id)}" tabindex="0">
+        <div class="top">${thumb(r)}<div style="min-width:0"><div class="t">${esc((r.caption || '').split('\n')[0] || '(no caption)')}</div>
+          <div class="help" style="margin:4px 0">${esc(fmtWhen(new Date(r.timestamp)))}</div><div style="display:flex;gap:6px;flex-wrap:wrap">${badgeFor(r)} ${todoChip(r)}</div></div></div>
+        <div class="mini">${['views', 'watch', 'eng', 'like', 'share', 'save'].map(k => { const c = col(k); return `<div><b>${c.fmt(c.get(r))}${vsMedian(c, r)}</b><span>${c.label}</span></div>`; }).join('')}</div>
+      </article>`).join('')}</div>`;
+  }
   $('reelsMore').hidden = !reels.after;
-  $('reelsUpdated').textContent = reels.fetchedAt ? `Loaded ${new Date(reels.fetchedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${reels.list.length} reels` : '';
+  $('reelsUpdated').textContent = reels.fetchedAt ? `${reels.list.length} reels · loaded ${new Date(reels.fetchedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : '';
+  if (reels.open && $('reelDlg').open) renderDetail(reels.open);
 }
+
+function renderDetail(id) {
+  const r = reels.list.find(x => x.id === id); if (!r) return;
+  reels.open = id;
+  const m = r.insights || {}, low = (m.reach || 0) < MIN_REACH;
+  $('reelDlgTitle').textContent = 'reel details';
+  $('reelDlgSub').innerHTML = `Posted ${esc(fmtWhen(new Date(r.timestamp)))} · ${badgeFor(r)}${m.fetched ? ` · numbers from ${esc(new Date(m.fetched).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}` : ''}`;
+  const box = (c, extra = '') => `<div class="metric"><b>${c.fmt(c.get(r))}${vsMedian(c, r)}</b><span>${c.label}${medians[c.k] != null && c.cmp ? ` <small>usual ${c.fmt(medians[c.k])}</small>` : ''}${extra}</span></div>`;
+  const count = (v, label) => `<div class="metric"><b>${fmtNum(v)}</b><span>${label}</span></div>`;
+  $('reelDlgBody').innerHTML = `<div class="detail">${thumb(r)}<div style="min-width:0">
+    <div style="white-space:pre-wrap;font-size:14px;max-height:120px;overflow:auto">${esc(r.caption || '(no caption)')}</div>
+    ${m.error ? `<div class="msg warn" style="margin-top:10px">Insights unavailable for this reel: ${esc(humanError(m.error))}</div>` : `
+    ${low ? `<div class="msg warn" style="margin-top:10px">Only ${m.reach || 0} accounts reached so far. Rates will move a lot as more people see it.</div>` : ''}
+    <div class="dgroup">Reach &amp; watching</div>
+    <div class="metrics">${box(col('views'))}${box(col('reach'))}${box(col('watch'))}${box(col('vpp'))}
+      <div class="metric"><b>${fmtHours(m.ig_reels_video_view_total_time)}</b><span>Total watch time</span></div></div>
+    <div class="dgroup">Rates (per account reached)</div>
+    <div class="metrics">${box(col('eng'))}${box(col('like'))}${box(col('share'))}${box(col('save'))}${box(col('comment'))}</div>
+    <div class="dgroup">Counts</div>
+    <div class="metrics">${count(m.likes, 'Likes')}${count(m.comments, 'Comments')}${count(m.shares, 'Shares')}${count(m.saved, 'Saves')}</div>`}
+    <div class="dgroup">Actions</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <label class="switch" style="align-items:center"><input type="checkbox" data-act="comments" ${r.is_comment_enabled !== false ? 'checked' : ''}><span style="font-size:14px"><b>Comments ${r.is_comment_enabled !== false ? 'on' : 'off'}</b> <span class="help">(changes it on Instagram)</span></span></label>
+      <a class="btn small secondary" href="${esc(r.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">Open in Instagram ↗</a>
+    </div>
+    <div class="dgroup">Do in the Instagram app</div>
+    <div class="help" style="margin:0 0 4px">Instagram doesn't let apps do these. Tick each one when it's done; the whole team sees the ticks.</div>
+    ${taskKeys(r).map(k => { const done = r.tasks?.[k]; return `<label class="task"><input type="checkbox" data-task="${k}" ${done ? 'checked' : ''}>
+      <span><b>${TASK_INFO[k][0]}</b>${done ? ` <small style="display:inline;color:var(--ok)">done ${esc(fmtWhen(new Date(done)))}</small>` : ''}<small>${TASK_INFO[k][1]}</small></span></label>`; }).join('')}
+  </div></div>`;
+}
+function openDetail(id) { renderDetail(id); if (!$('reelDlg').open) $('reelDlg').showModal(); }
+$('reelDlg').addEventListener('close', () => { reels.open = null; });
+
 document.querySelectorAll('.seg [data-f]').forEach(b => b.onclick = () => {
   reels.filter = b.dataset.f; document.querySelectorAll('.seg [data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderReels();
 });
-$('reelSort').onchange = e => { reels.sort = e.target.value; renderReels(); };
+document.querySelectorAll('.seg [data-v]').forEach(b => b.onclick = () => { reels.view = b.dataset.v; store.set('reelsView', reels.view); renderReels(); });
+$('reelSort').onchange = e => { reels.sort = e.target.value; reels.dir = -1; renderReels(); };
 $('reelsRefresh').onclick = () => loadReels(false, true);
 $('reelsMore').onclick = () => loadReels(true);
-$('reels-list').addEventListener('change', async e => {
-  const card = e.target.closest('.reel'); if (!card) return;
-  const id = card.dataset.id, r = reels.list.find(x => x.id === id);
+$('reels-list').addEventListener('click', e => {
+  const th = e.target.closest('th[data-sort]');
+  if (th) { const k = th.dataset.sort; reels.dir = reels.sort === k ? -reels.dir : -1; reels.sort = k; return renderReels(); }
+  const row = e.target.closest('[data-id]'); if (row) openDetail(row.dataset.id);
+});
+$('reels-list').addEventListener('keydown', e => { const row = e.target.closest('[data-id]'); if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(row.dataset.id); } });
+$('reelDlgBody').addEventListener('change', async e => {
+  const id = reels.open, r = reels.list.find(x => x.id === id); if (!r) return;
   if (e.target.dataset.act === 'comments') {
     const on = e.target.checked;
-    if (!confirm(on ? 'Turn comments ON for this reel?' : 'Turn comments OFF for this reel? Existing comments stay, but nobody can add new ones.')) { e.target.checked = !on; return; }
+    if (!confirm(on ? 'Turn comments ON for this reel on Instagram?' : 'Turn comments OFF for this reel on Instagram? Existing comments stay, but nobody can add new ones.')) { e.target.checked = !on; return; }
     e.target.disabled = true;
     try {
       const res = await call('/api/reels/comments', { method: 'POST', body: JSON.stringify({ id, enabled: on }) });
