@@ -157,6 +157,32 @@
   .spin { display:inline-block; width:12px; height:12px; border:2px solid var(--line-2); border-top-color:var(--agni); border-radius:50%; animation:spin .8s linear infinite; vertical-align:-1px; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
+  /* all reels */
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .seg { display:inline-flex; border:1px solid var(--line-2); border-radius:10px; overflow:hidden; }
+  .seg button { background:none; border:0; padding:8px 12px; color:var(--dim); cursor:pointer; font-size:14px; font-weight:600; }
+  .seg button[aria-pressed=true] { background:var(--panel-2); color:var(--bone); }
+  .toolbar select { background:var(--night); border:1px solid var(--line-2); border-radius:10px; padding:8px 10px; color-scheme:dark; }
+  .toolbar .grow { flex:1; }
+  .reel { display:grid; grid-template-columns:96px 1fr; gap:16px; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); margin-bottom:12px; }
+  .reel img, .reel .noimg { width:96px; aspect-ratio:9/16; object-fit:cover; border-radius:8px; background:#000; display:block; }
+  @media (max-width:640px) { .reel { grid-template-columns:72px 1fr; } .reel img, .reel .noimg { width:72px; } }
+  .reel .t { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .badge { font-size:12px; padding:2px 8px; border-radius:99px; border:1px solid var(--line-2); color:var(--dim); white-space:nowrap; }
+  .badge.trial { border-color:var(--agni); color:var(--agni); }
+  .badge.maybe { border-style:dashed; }
+  .metrics { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin:10px 0; }
+  @media (max-width:520px) { .metrics { grid-template-columns:repeat(2, minmax(0,1fr)); } }
+  .metric { background:var(--night); border-radius:8px; padding:6px 10px; }
+  .metric b { display:block; font-size:17px; font-variant-numeric:tabular-nums; }
+  .metric span { font-size:12px; color:var(--dim); }
+  .reel .row2 { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .tasks { margin-top:10px; border-top:1px solid var(--line); padding-top:10px; }
+  .tasks .head { font-size:13px; color:var(--dim); margin-bottom:6px; }
+  .task { display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; padding:4px 0; cursor:pointer; font-size:14px; }
+  .task input { accent-color:var(--ok); width:16px; height:16px; margin-top:3px; }
+  .task small { display:block; color:var(--mute); font-size:12px; }
+  .task input:checked ~ span b { text-decoration:line-through; color:var(--mute); }
   .toast { position:fixed; left:50%; bottom:96px; transform:translateX(-50%); background:var(--bone); color:var(--night); padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px; z-index:50; display:flex; gap:12px; align-items:center; box-shadow:0 8px 30px rgba(0,0,0,.4); max-width:calc(100vw - 32px); }
   .toast button { background:none; border:0; color:#0A6F6B; font-weight:700; cursor:pointer; text-decoration:underline; }
 </style>
@@ -181,6 +207,7 @@
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tabNew" aria-selected="true" aria-controls="viewNew">New reels<span class="count" id="draftCount" hidden></span></button>
     <button class="tab" role="tab" id="tabQueue" aria-selected="false" aria-controls="viewQueue">Queue<span class="count" id="queueCount" hidden></span></button>
+    <button class="tab" role="tab" id="tabReels" aria-selected="false" aria-controls="viewReels">All reels &amp; insights</button>
   </div>
 
   <section id="viewNew" role="tabpanel" aria-labelledby="tabNew">
@@ -196,6 +223,29 @@
       <div class="reels" id="reels"></div>
       <div class="step"><span class="n">3</span><div><h2>Review and queue</h2><p>Use the bar at the bottom. Nothing is sent to Instagram until you confirm.</p></div></div>
     </div>
+  </section>
+
+  <section id="viewReels" role="tabpanel" aria-labelledby="tabReels" hidden>
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Which reels">
+        <button data-f="all" aria-pressed="true">All reels</button>
+        <button data-f="trial" aria-pressed="false">Trial reels</button>
+        <button data-f="grid" aria-pressed="false">On profile grid</button>
+      </div>
+      <label class="help" style="margin:0">Sort <select id="reelSort" aria-label="Sort reels">
+        <option value="new">Newest first</option><option value="views">Most views</option><option value="reach">Most reach</option>
+        <option value="watch">Longest average watch</option><option value="shares">Most shares</option><option value="saved">Most saves</option>
+      </select></label>
+      <span class="grow"></span>
+      <span class="help" id="reelsUpdated" style="margin:0"></span>
+      <button class="btn small secondary" id="reelsRefresh">Refresh numbers</button>
+    </div>
+    <div class="banner" style="font-size:14px"><span class="dot warn" style="margin-top:7px"></span><div>
+      <b>How trial reels are marked</b>Instagram doesn't tell apps which reels are trials. <b style="display:inline;color:var(--agni)">Trial</b> means it was posted from this app as a trial.
+      <b style="display:inline">Probably trial</b> means it isn't on the profile grid, which is true of trial reels but also of reels someone chose to keep off the grid.
+      Numbers come from Instagram and refresh every 30 minutes.</div></div>
+    <div id="reels-list"></div>
+    <div style="text-align:center;margin-top:8px"><button class="btn secondary" id="reelsMore" hidden>Load older reels</button></div>
   </section>
 
   <section id="viewQueue" role="tabpanel" aria-labelledby="tabQueue" hidden>
@@ -265,7 +315,8 @@
       <li><b>Pick when.</b> "Post now" goes out about a minute after queuing. "Schedule" posts at that time. All times are in your computer's time zone.</li>
       <li><b>Review &amp; queue.</b> Nothing reaches Instagram until you press the final button in the review window.</li>
       <li><b>Watch the Queue tab.</b> Posting takes 1 to 3 minutes per reel. When a reel is live you get a "View on Instagram" link.</li>
-      <li><b>Two things only the Instagram app can do.</b> Instagram does not let apps set <b>Hide like count</b> or <b>Translations</b>. After a reel is live, open it in the Instagram app, tap ⋯, and set them. The Queue tab gives you a checklist for each reel.</li>
+      <li><b>All reels &amp; insights.</b> Every reel on the account with views, reach, average watch time, shares and saves. Sort by what matters, switch comments on or off, and open any reel in Instagram.</li>
+      <li><b>Three things only the Instagram app can do:</b> <b>Hide like count</b>, <b>Translations</b> and <b>Share to followers</b> for trial reels. Instagram doesn't let apps do them. Each reel has a checklist with the exact taps; tick items when done and the whole team sees it.</li>
       <li><b>If something fails</b>, the Queue tab says why in plain words and has a "Try again" button. Daily limit: 100 posts in any 24 hours.</li>
     </ol>
   </div>
@@ -303,12 +354,14 @@ const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? 
 /* ===================== tabs ===================== */
 function showTab(t) {
   currentTab = t;
-  $('tabNew').setAttribute('aria-selected', t === 'new'); $('tabQueue').setAttribute('aria-selected', t === 'queue');
-  $('viewNew').hidden = t !== 'new'; $('viewQueue').hidden = t !== 'queue';
+  $('tabNew').setAttribute('aria-selected', t === 'new'); $('tabQueue').setAttribute('aria-selected', t === 'queue'); $('tabReels').setAttribute('aria-selected', t === 'reels');
+  $('viewNew').hidden = t !== 'new'; $('viewQueue').hidden = t !== 'queue'; $('viewReels').hidden = t !== 'reels';
+  if (t === 'reels' && !reels.loaded) loadReels();
   renderBar();
 }
 $('tabNew').onclick = () => showTab('new');
 $('tabQueue').onclick = () => showTab('queue');
+$('tabReels').onclick = () => showTab('reels');
 $('helpBtn').onclick = () => $('helpDlg').showModal();
 
 /* ===================== engine connection ===================== */
@@ -512,7 +565,7 @@ function buildCard(d) {
             <span><b style="font-size:14px">Turn off comments</b><br><span class="help">Comments are switched off right after the reel goes live.</span></span></label>
         </div>
       </details>
-      <div class="after"><b>After it's live:</b> set <b>Hide like count</b> and <b>Translations</b> in the Instagram app (⋯ on the reel). Instagram doesn't let apps change these. The Queue tab gives you a checklist.</div>
+      <div class="after"><b>After it's live:</b> set <b>Hide like count</b> and <b>Translations</b> in the Instagram app (⋯ on the reel). Instagram doesn't let apps change these. The "All reels &amp; insights" tab gives you a shared checklist.</div>
     </div>`;
   el.querySelector('[data-act=remove]').setAttribute('aria-label', `Remove ${d.f.name}`);
   const video = el.querySelector('video');
@@ -705,13 +758,10 @@ function jobRow(j) {
     status = `<div class="err">${esc(humanError(j.error))}<details><summary>Details for Ritwik</summary>${esc(j.error)}</details></div>`;
     acts = `<button class="btn small primary" data-a="retry">Try again</button>`;
   } else if (j.state === 'posted') {
-    const done = store.get('todo-' + j.id, {});
     status = `<div class="s" style="color:var(--ok)">✓ Live since ${esc(fmtWhen(when))}</div>
-      <div class="todo"><span class="help" style="margin:0">Finish in the Instagram app (⋯ on the reel):</span>
-        <label><input type="checkbox" data-todo="likes" ${done.likes ? 'checked' : ''}><span>Hide like count</span></label>
-        <label><input type="checkbox" data-todo="translations" ${done.translations ? 'checked' : ''}><span>Set Translations</span></label></div>`;
-    acts = j.permalink ? `<a class="btn small secondary" href="${esc(j.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">View on Instagram ↗</a>`
-                       : `<span class="chip">Open the profile to see it</span>`;
+      <div class="help">Insights, comments and the after-posting checklist are in <b>All reels &amp; insights</b>.</div>`;
+    acts = `<button class="btn small secondary" data-a="insights">See insights</button>` +
+           (j.permalink ? `<a class="btn small secondary" href="${esc(j.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">View on Instagram ↗</a>` : '');
   } else if (j.state === 'cancelled') {
     status = `<div class="s">Cancelled. Nothing was posted.</div>`;
   }
@@ -751,6 +801,7 @@ async function act(path, body) {
 $('queue').addEventListener('click', async e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
   const row = b.closest('.job'), id = row.dataset.id, j = jobs.find(x => x.id === id), a = b.dataset.a;
+  if (a === 'insights') { showTab('reels'); return; }
   if (a === 'cancel' && confirm('Cancel this reel? It will not be posted.')) { await act('/api/cancel', { id }); toast('Cancelled. Nothing was posted.'); }
   if (a === 'postnow' && confirm('Post this reel to Instagram now?')) { await act('/api/postnow', { id }); toast('Posting within a minute'); }
   if (a === 'retry' && confirm(j.error?.includes('Interrupted') ? 'Did you check Instagram? If the reel is already live, trying again will post it twice.' : 'Try posting this reel again now?')) { await act('/api/retry', { id }); toast('Trying again'); }
@@ -766,10 +817,103 @@ $('queue').addEventListener('click', async e => {
     await act('/api/reschedule', { id, run_at: d.toISOString() }); toast(`Moved to ${fmtWhen(d)}`);
   }
 });
-$('queue').addEventListener('change', e => {
-  const t = e.target.dataset.todo; if (!t) return;
-  const id = e.target.closest('.job').dataset.id, done = store.get('todo-' + id, {});
-  done[t] = e.target.checked; store.set('todo-' + id, done);
+/* ===================== all reels & insights ===================== */
+const reels = { list: [], after: null, loaded: false, filter: 'all', sort: 'new', fetchedAt: 0 };
+const TASK_INFO = {
+  shared_to_followers: ['Share to followers', 'Only for trial reels you want everyone to see. In the Instagram app, open the reel and tap "Share to followers".'],
+  likes_hidden: ['Hide like count', 'In the Instagram app, open the reel, tap ⋯ and choose "Hide like count". The same menu has "Unhide like count".'],
+  translations: ['Translations', 'In the Instagram app, open the reel, tap ⋯ and look for Translations. Instagram only offers it on some reels and in some regions.'],
+};
+const fmtNum = n => n == null ? '–' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(n);
+const fmtSec = ms => ms == null ? '–' : (ms / 1000).toFixed(1) + ' s';
+const fmtHours = ms => ms == null ? '–' : ms >= 3600e3 ? (ms / 3600e3).toFixed(1) + ' h' : Math.round(ms / 60e3) + ' min';
+
+async function loadReels(more, refresh) {
+  $('reelsRefresh').disabled = true;
+  if (!more) $('reels-list').innerHTML = `<div class="empty"><span class="spin"></span> Loading reels and insights from Instagram…</div>`;
+  try {
+    const qs = new URLSearchParams({ ...(more && reels.after ? { after: reels.after } : {}), ...(refresh ? { refresh: '1' } : {}) });
+    const r = await call('/api/reels?' + qs).then(r => r.json());
+    if (r.error) throw new Error(r.error);
+    reels.list = more ? reels.list.concat(r.reels) : r.reels;
+    reels.after = r.after; reels.loaded = true; reels.fetchedAt = Date.now();
+  } catch (e) {
+    if (e.message !== 'login') $('reels-list').innerHTML = `<div class="empty" style="color:var(--bad)">Couldn't load reels from Instagram. ${esc(humanError(e.message))}</div>`;
+    $('reelsRefresh').disabled = false; return;
+  }
+  $('reelsRefresh').disabled = false;
+  renderReels();
+}
+function reelCard(r) {
+  const m = r.insights || {}, cap = esc((r.caption || '').split('\n')[0] || '(no caption)');
+  const badge = r.trial === 'yes' ? `<span class="badge trial">Trial${r.graduation === 'SS_PERFORMANCE' ? ' · auto-share on' : ''}</span>`
+              : r.trial === 'maybe' ? `<span class="badge maybe" title="Not on the profile grid">Probably trial</span>` : `<span class="badge">On profile grid</span>`;
+  const shareRate = m.reach ? ((m.shares || 0) / m.reach * 100).toFixed(1) + '%' : '–';
+  const metrics = m.error ? `<div class="msg warn">Insights unavailable for this reel: ${esc(humanError(m.error))}</div>` : `
+    <div class="metrics">
+      <div class="metric"><b>${fmtNum(m.views)}</b><span>Views</span></div>
+      <div class="metric"><b>${fmtNum(m.reach)}</b><span>Accounts reached</span></div>
+      <div class="metric"><b>${fmtSec(m.ig_reels_avg_watch_time)}</b><span>Average watch</span></div>
+      <div class="metric"><b>${fmtHours(m.ig_reels_video_view_total_time)}</b><span>Total watch time</span></div>
+      <div class="metric"><b>${fmtNum(m.likes)}</b><span>Likes</span></div>
+      <div class="metric"><b>${fmtNum(m.comments)}</b><span>Comments</span></div>
+      <div class="metric"><b>${fmtNum(m.shares)}</b><span>Shares · ${shareRate} of reach</span></div>
+      <div class="metric"><b>${fmtNum(m.saved)}</b><span>Saves</span></div>
+    </div>`;
+  const taskKeys = r.trial === 'no' ? ['likes_hidden', 'translations'] : ['shared_to_followers', 'likes_hidden', 'translations'];
+  const tasks = taskKeys.map(k => {
+    const done = r.tasks?.[k];
+    return `<label class="task"><input type="checkbox" data-task="${k}" ${done ? 'checked' : ''}>
+      <span><b>${TASK_INFO[k][0]}</b>${done ? ` <small style="display:inline;color:var(--ok)">done ${esc(fmtWhen(new Date(done)))}</small>` : ''}<small>${TASK_INFO[k][1]}</small></span></label>`;
+  }).join('');
+  return `<article class="reel" data-id="${esc(r.id)}">
+    ${r.thumbnail_url ? `<img src="${esc(r.thumbnail_url)}" alt="" loading="lazy">` : '<div class="noimg"></div>'}
+    <div style="min-width:0">
+      <div class="row2"><div class="t" style="flex:1;min-width:0">${cap}</div>${badge}</div>
+      <div class="s" style="color:var(--dim);font-size:13px">Posted ${esc(fmtWhen(new Date(r.timestamp)))}${m.stale ? ' · showing last saved numbers' : ''}</div>
+      ${metrics}
+      <div class="row2">
+        <label class="switch" style="align-items:center"><input type="checkbox" data-act="comments" ${r.is_comment_enabled !== false ? 'checked' : ''}><span style="font-size:14px">Comments ${r.is_comment_enabled !== false ? 'on' : 'off'}</span></label>
+        <a class="btn small secondary" href="${esc(r.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">Open in Instagram ↗</a>
+      </div>
+      <div class="tasks"><div class="head">Only the Instagram app can do these. Tick them when done, and the ticks are shared with the whole team.</div>${tasks}</div>
+    </div></article>`;
+}
+function renderReels() {
+  const key = { views: 'views', reach: 'reach', watch: 'ig_reels_avg_watch_time', shares: 'shares', saved: 'saved' }[reels.sort];
+  let list = reels.list.filter(r => reels.filter === 'all' || (reels.filter === 'trial' ? r.trial !== 'no' : r.trial === 'no'));
+  list = key ? [...list].sort((a, b) => (b.insights?.[key] ?? -1) - (a.insights?.[key] ?? -1)) : list;
+  $('reels-list').innerHTML = list.length ? list.map(reelCard).join('')
+    : `<div class="empty">No reels match this filter${reels.after ? ' yet. Try "Load older reels".' : '.'}</div>`;
+  $('reelsMore').hidden = !reels.after;
+  $('reelsUpdated').textContent = reels.fetchedAt ? `Loaded ${new Date(reels.fetchedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })} · ${reels.list.length} reels` : '';
+}
+document.querySelectorAll('.seg [data-f]').forEach(b => b.onclick = () => {
+  reels.filter = b.dataset.f; document.querySelectorAll('.seg [data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderReels();
+});
+$('reelSort').onchange = e => { reels.sort = e.target.value; renderReels(); };
+$('reelsRefresh').onclick = () => loadReels(false, true);
+$('reelsMore').onclick = () => loadReels(true);
+$('reels-list').addEventListener('change', async e => {
+  const card = e.target.closest('.reel'); if (!card) return;
+  const id = card.dataset.id, r = reels.list.find(x => x.id === id);
+  if (e.target.dataset.act === 'comments') {
+    const on = e.target.checked;
+    if (!confirm(on ? 'Turn comments ON for this reel?' : 'Turn comments OFF for this reel? Existing comments stay, but nobody can add new ones.')) { e.target.checked = !on; return; }
+    e.target.disabled = true;
+    try {
+      const res = await call('/api/reels/comments', { method: 'POST', body: JSON.stringify({ id, enabled: on }) });
+      if (!res.ok) throw new Error((await res.json()).error || 'failed');
+      r.is_comment_enabled = on; toast(on ? 'Comments turned on' : 'Comments turned off'); renderReels();
+    } catch (err) { if (err.message !== 'login') { e.target.checked = !on; e.target.disabled = false; toast("Instagram didn't accept that. Nothing changed."); } }
+  }
+  const task = e.target.dataset.task;
+  if (task) {
+    try {
+      const res = await call('/api/reels/task', { method: 'POST', body: JSON.stringify({ id, task, done: e.target.checked }) }).then(x => x.json());
+      r.tasks = res.tasks; renderReels();
+    } catch (err) { if (err.message !== 'login') { e.target.checked = !e.target.checked; toast("Couldn't save that tick. Try again."); } }
+  }
 });
 
 /* ===================== boot ===================== */
