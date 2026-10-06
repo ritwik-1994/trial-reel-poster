@@ -1,0 +1,6 @@
+# Only the public page is published. Engine code, queue, uploads, sessions and logs stay on the Mac.
+*
+!.gitignore
+!index.html
+!config.json
+!.nojekyll

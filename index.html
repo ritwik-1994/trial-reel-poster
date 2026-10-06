@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trial Reel Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night:#091625; --panel:#0f1f31; --panel-2:#142940; --line:#22384f; --line-2:#2f4a66;
+    --bone:#F1E8D6; --dim:#a9b3bd; --mute:#7c8894;
+    --agni:#DA8835; --agni-ink:#1a0f04; --jal:#5AAFD0; --ok:#6fcf97; --warn:#e8b64a; --bad:#ef7a6a;
+    --r:14px;
+  }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  html, body { margin:0; background:var(--night); color:var(--bone); font:16px/1.5 Karla, system-ui, sans-serif; }
+  button, input, textarea, select { font:inherit; color:inherit; }
+  :focus-visible { outline:2px solid var(--jal); outline-offset:2px; border-radius:6px; }
+  a { color:var(--jal); }
+
+  header { position:sticky; top:0; z-index:20; background:rgba(9,22,37,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  .bar { max-width:1120px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  h1 { font:400 26px/1 Anton, sans-serif; text-transform:lowercase; letter-spacing:.5px; margin:0; }
+  .status { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; align-items:center; }
+  .pill { display:inline-flex; align-items:center; gap:6px; font-size:13px; padding:5px 10px; border-radius:99px; border:1px solid var(--line); color:var(--dim); white-space:nowrap; }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--mute); flex:none; }
+  .dot.ok { background:var(--ok); } .dot.bad { background:var(--bad); } .dot.warn { background:var(--warn); }
+  .linkbtn { background:none; border:0; color:var(--jal); cursor:pointer; padding:4px 2px; font-size:14px; text-decoration:underline; text-underline-offset:3px; }
+  main { max-width:1120px; margin:0 auto; padding:20px 16px 140px; }
+  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:24px; }
+  .tab { background:none; border:0; border-bottom:2px solid transparent; padding:10px 14px; color:var(--dim); cursor:pointer; font-weight:600; font-size:15px; }
+  .tab[aria-selected=true] { color:var(--bone); border-color:var(--agni); }
+  .count { display:inline-block; min-width:20px; padding:0 6px; margin-left:6px; border-radius:99px; background:var(--panel-2); font-size:12px; line-height:20px; text-align:center; }
+  .count.alert { background:var(--bad); color:#1b0a07; }
+  .banner { border:1px solid var(--line-2); background:var(--panel); border-radius:var(--r); padding:12px 14px; margin-bottom:16px; display:flex; gap:10px; align-items:flex-start; font-size:15px; }
+  .banner.bad { border-color:rgba(239,122,106,.5); }
+  .banner.warn { border-color:rgba(232,182,74,.5); }
+  .banner b { display:block; }
+
+  .step { display:flex; align-items:baseline; gap:10px; margin:28px 0 12px; }
+  .step .n { font:400 15px Anton, sans-serif; color:var(--agni-ink); background:var(--agni); width:24px; height:24px; border-radius:50%; display:inline-grid; place-items:center; flex:none; }
+  .step h2 { font:700 19px Karla, sans-serif; margin:0; }
+  .step p { margin:0; color:var(--dim); font-size:14px; }
+
+  .drop { display:block; border:2px dashed var(--line-2); border-radius:var(--r); padding:30px 20px; text-align:center; cursor:pointer; transition:.15s; background:var(--panel); }
+  .drop:hover, .drop.over { border-color:var(--agni); background:var(--panel-2); }
+  .drop strong { display:block; font-size:18px; margin-bottom:4px; }
+  .drop .hint { color:var(--dim); font-size:14px; }
+  .drop.compact { padding:14px; }
+  .drop.compact strong { font-size:15px; margin:0; }
+  .drop.compact .hint { display:none; }
+
+  .reels { display:flex; flex-direction:column; gap:16px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); display:grid; grid-template-columns:220px 1fr; gap:20px; padding:16px; }
+  .card.has-error { border-color:rgba(239,122,106,.6); }
+  @media (max-width:720px) { .card { grid-template-columns:1fr; } .preview { max-width:240px; margin:0 auto; width:100%; } }
+  .preview video { width:100%; aspect-ratio:9/16; object-fit:cover; border-radius:10px; background:#000; display:block; }
+  .cover { margin-top:10px; }
+  .cover input[type=range] { width:100%; accent-color:var(--agni); }
+  .cover .lbl { display:flex; justify-content:space-between; font-size:13px; color:var(--dim); }
+  .fields { display:flex; flex-direction:column; gap:16px; min-width:0; }
+  .cardhead { display:flex; align-items:flex-start; gap:10px; }
+  .cardhead .name { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+  .chip { font-size:12px; padding:2px 8px; border-radius:99px; background:var(--panel-2); color:var(--dim); }
+  .chip.ok { color:var(--ok); }
+  .iconbtn { margin-left:auto; flex:none; background:none; border:1px solid var(--line); color:var(--dim); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:13px; }
+  .iconbtn:hover { color:var(--bone); border-color:var(--line-2); }
+  .field > label, .field > .label { display:block; font-weight:600; font-size:14px; margin-bottom:6px; }
+  .help { color:var(--dim); font-size:13px; margin-top:6px; }
+  .msg { font-size:13px; margin-top:6px; }
+  .msg.bad { color:var(--bad); } .msg.warn { color:var(--warn); }
+  textarea, input[type=text], input[type=datetime-local], input[type=number] { width:100%; background:var(--night); border:1px solid var(--line-2); border-radius:10px; padding:10px 12px; color-scheme:dark; }
+  textarea { min-height:96px; resize:vertical; }
+  textarea:focus, input:focus { border-color:var(--jal); outline:none; }
+  .counters { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--mute); margin-top:6px; }
+  .counters .over { color:var(--bad); font-weight:700; }
+
+  .choices { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  @media (max-width:560px) { .choices { grid-template-columns:1fr; } }
+  .choice { position:relative; display:block; border:1px solid var(--line-2); border-radius:10px; padding:10px 12px 10px 38px; cursor:pointer; background:var(--night); }
+  .choice input { position:absolute; left:12px; top:13px; accent-color:var(--agni); width:16px; height:16px; margin:0; }
+  .choice b { display:block; font-size:14px; }
+  .choice span { display:block; color:var(--dim); font-size:13px; line-height:1.4; margin-top:2px; }
+  .choice:has(input:checked) { border-color:var(--agni); background:rgba(218,136,53,.08); }
+  .when-row { display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  .when-row input { max-width:260px; }
+  .rel { font-size:13px; color:var(--jal); }
+
+  details.more { border-top:1px solid var(--line); padding-top:10px; }
+  details.more summary { cursor:pointer; color:var(--dim); font-size:14px; font-weight:600; list-style:none; }
+  details.more summary::-webkit-details-marker { display:none; }
+  details.more summary::before { content:"+ "; }
+  details.more[open] summary::before { content:"– "; }
+  details.more .inner { display:flex; flex-direction:column; gap:14px; margin-top:12px; }
+  .switch { display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
+  .switch input { accent-color:var(--agni); width:18px; height:18px; margin-top:2px; flex:none; }
+
+  .after { border:1px dashed var(--line-2); border-radius:10px; padding:10px 12px; font-size:13px; color:var(--dim); }
+  .after b { color:var(--bone); }
+
+  .actionbar { position:fixed; left:0; right:0; bottom:0; z-index:30; background:rgba(15,31,49,.97); border-top:1px solid var(--line-2); backdrop-filter:blur(8px); }
+  .actionbar .bar { padding:12px 16px; }
+  .summary { font-size:14px; color:var(--dim); }
+  .summary b { color:var(--bone); }
+  .summary .issues { color:var(--bad); font-weight:600; }
+  .btn { border:0; border-radius:10px; padding:11px 18px; font-weight:700; font-size:15px; cursor:pointer; display:inline-block; }
+  .btn.primary { background:var(--agni); color:var(--agni-ink); }
+  .btn.primary:hover { filter:brightness(1.07); }
+  .btn.secondary { background:transparent; border:1px solid var(--line-2); color:var(--bone); font-weight:600; }
+  .btn.danger { background:transparent; border:1px solid rgba(239,122,106,.6); color:var(--bad); font-weight:600; }
+  .btn.small { padding:7px 12px; font-size:13px; border-radius:8px; }
+  .btn:disabled { opacity:.45; cursor:not-allowed; filter:none; }
+  .actions { display:flex; gap:8px; margin-left:auto; flex-wrap:wrap; }
+
+  dialog { border:1px solid var(--line-2); border-radius:16px; background:var(--panel); color:var(--bone); padding:0; width:min(640px, calc(100vw - 32px)); max-height:calc(100vh - 48px); }
+  dialog::backdrop { background:rgba(3,8,14,.7); }
+  .dlg-head { padding:18px 20px 0; }
+  .dlg-head h3 { margin:0; font:400 24px Anton, sans-serif; text-transform:lowercase; }
+  .dlg-head p { margin:6px 0 0; color:var(--dim); font-size:14px; }
+  .dlg-body { padding:16px 20px; overflow:auto; max-height:60vh; }
+  .dlg-foot { padding:14px 20px 18px; display:flex; gap:8px; justify-content:flex-end; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .rv { display:grid; grid-template-columns:54px 1fr; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); align-items:center; }
+  .rv video { width:54px; aspect-ratio:9/16; object-fit:cover; border-radius:6px; background:#000; }
+  .rv .t { font-weight:600; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rv .s { font-size:13px; color:var(--dim); }
+  .progress { height:6px; background:var(--night); border-radius:99px; overflow:hidden; margin-top:6px; }
+  .progress i { display:block; height:100%; width:0; background:var(--agni); transition:width .2s; }
+  .help-list { margin:0; padding-left:18px; color:var(--dim); font-size:15px; }
+  .help-list li { margin-bottom:10px; }
+  .help-list b { color:var(--bone); }
+
+  .group { margin-bottom:28px; }
+  .group h3 { font-size:14px; text-transform:uppercase; letter-spacing:.8px; color:var(--dim); margin:0 0 10px; font-weight:700; }
+  .job { display:grid; grid-template-columns:64px 1fr auto; gap:14px; align-items:start; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); margin-bottom:10px; }
+  .job.failed { border-color:rgba(239,122,106,.5); }
+  .job video { width:64px; aspect-ratio:9/16; object-fit:cover; border-radius:8px; background:#000; }
+  .job .t { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .job .s { color:var(--dim); font-size:14px; }
+  .job .acts { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+  @media (max-width:640px) { .job { grid-template-columns:56px 1fr; } .job .acts { grid-column:1 / -1; justify-content:flex-start; } }
+  .stepper { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .stepper span { font-size:12px; padding:3px 8px; border-radius:99px; background:var(--night); color:var(--mute); }
+  .stepper span.done { color:var(--ok); }
+  .stepper span.now { color:var(--agni-ink); background:var(--agni); }
+  .err { margin-top:8px; font-size:14px; color:var(--bad); }
+  .err details { color:var(--mute); font-size:12px; margin-top:4px; word-break:break-word; }
+  .todo { margin-top:10px; display:flex; flex-direction:column; gap:4px; font-size:14px; }
+  .todo label { display:flex; gap:8px; align-items:center; cursor:pointer; color:var(--dim); }
+  .todo input { accent-color:var(--ok); }
+  .todo input:checked + span { text-decoration:line-through; color:var(--mute); }
+  .empty { text-align:center; color:var(--dim); padding:40px 20px; border:1px dashed var(--line); border-radius:var(--r); }
+  .reschedule { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .reschedule input { max-width:240px; padding:6px 10px; }
+  .spin { display:inline-block; width:12px; height:12px; border:2px solid var(--line-2); border-top-color:var(--agni); border-radius:50%; animation:spin .8s linear infinite; vertical-align:-1px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .toast { position:fixed; left:50%; bottom:96px; transform:translateX(-50%); background:var(--bone); color:var(--night); padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px; z-index:50; display:flex; gap:12px; align-items:center; box-shadow:0 8px 30px rgba(0,0,0,.4); max-width:calc(100vw - 32px); }
+  .toast button { background:none; border:0; color:#0A6F6B; font-weight:700; cursor:pointer; text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <h1>trial reel poster</h1>
+    <div class="status">
+      <span class="pill" id="acctPill" title="The Instagram account reels will post to"><span class="dot"></span><span>Checking account…</span></span>
+      <span class="pill" id="quotaPill" hidden title="Instagram allows 100 posts through apps in any 24 hours"></span>
+      <button class="linkbtn" id="helpBtn">How this works</button>
+      <button class="linkbtn" id="signOutBtn" hidden>Sign out</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="banners"></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tabNew" aria-selected="true" aria-controls="viewNew">New reels<span class="count" id="draftCount" hidden></span></button>
+    <button class="tab" role="tab" id="tabQueue" aria-selected="false" aria-controls="viewQueue">Queue<span class="count" id="queueCount" hidden></span></button>
+  </div>
+
+  <section id="viewNew" role="tabpanel" aria-labelledby="tabNew">
+    <div class="step"><span class="n">1</span><div><h2>Add reels</h2><p>Each one posts to @aware._wolf_ as a separate Trial Reel.</p></div></div>
+    <label class="drop" id="drop" tabindex="0">
+      <strong id="dropTitle">Drop your reels here, or click to choose</strong>
+      <span class="hint">MP4 or MOV · vertical 9:16 · 3 seconds to 15 minutes · up to 300 MB each · 1 to 4 reels works best</span>
+      <input type="file" id="pick" accept="video/mp4,video/quicktime,video/*" multiple hidden>
+    </label>
+
+    <div id="setup" hidden>
+      <div class="step"><span class="n">2</span><div><h2>Set up each reel</h2><p>Caption, cover, what happens after the trial, and when it posts.</p></div></div>
+      <div class="reels" id="reels"></div>
+      <div class="step"><span class="n">3</span><div><h2>Review and queue</h2><p>Use the bar at the bottom. Nothing is sent to Instagram until you confirm.</p></div></div>
+    </div>
+  </section>
+
+  <section id="viewQueue" role="tabpanel" aria-labelledby="tabQueue" hidden>
+    <div id="queue"></div>
+    <p class="help" style="margin-top:24px">Scheduled reels post only while this app is running on Ritwik's Mac. If the Mac is off at the scheduled time, the reel posts as soon as the app is back on.</p>
+  </section>
+</main>
+
+<div class="actionbar" id="actionbar" hidden>
+  <div class="bar">
+    <div class="summary" id="summary"></div>
+    <div class="actions">
+      <button class="btn secondary" id="spreadBtn" title="Give every reel a time, spaced apart">Schedule all…</button>
+      <button class="btn primary" id="reviewBtn">Review &amp; queue</button>
+    </div>
+  </div>
+</div>
+
+<dialog id="spreadDlg">
+  <form method="dialog">
+    <div class="dlg-head"><h3>schedule all reels</h3><p>Sets a time on every reel. You can still change any single reel afterwards.</p></div>
+    <div class="dlg-body">
+      <div class="field"><label for="spreadStart">First reel posts at</label><input type="datetime-local" id="spreadStart"><div class="help" id="spreadTz"></div></div>
+      <div class="field" style="margin-top:14px"><label for="spreadGap">Then one reel every</label>
+        <div class="when-row" style="margin:0"><input type="number" id="spreadGap" min="0" step="5" value="60" style="max-width:110px"><span>minutes</span></div>
+        <div class="help">Use 0 to post them all at the same time. Reels post in the order shown on the page.</div>
+      </div>
+      <div class="msg bad" id="spreadErr"></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn secondary" value="cancel">Cancel</button>
+      <button class="btn primary" id="spreadApply" value="apply">Apply times</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="reviewDlg">
+  <div class="dlg-head"><h3 id="reviewTitle">review</h3><p id="reviewSub"></p></div>
+  <div class="dlg-body" id="reviewList"></div>
+  <div class="dlg-foot">
+    <button class="btn secondary" id="reviewBack">Back to editing</button>
+    <button class="btn primary" id="reviewGo">Queue reels</button>
+  </div>
+</dialog>
+
+<dialog id="loginDlg">
+  <form id="loginForm">
+    <div class="dlg-head"><h3>sign in</h3><p>Enter the team password Ritwik gave you. You stay signed in on this browser for 30 days.</p></div>
+    <div class="dlg-body">
+      <div class="field"><label for="pw">Team password</label>
+        <input type="password" id="pw" autocomplete="current-password" required style="width:100%;background:var(--night);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px">
+        <div class="msg bad" id="loginErr" role="alert"></div></div>
+    </div>
+    <div class="dlg-foot"><button class="btn primary" id="loginBtn" type="submit">Sign in</button></div>
+  </form>
+</dialog>
+
+<dialog id="helpDlg">
+  <div class="dlg-head"><h3>how this works</h3><p>A two-minute read before your first batch.</p></div>
+  <div class="dlg-body">
+    <ol class="help-list">
+      <li><b>What a Trial Reel is.</b> Instagram shows it only to people who do not follow @aware._wolf_. Followers do not see it unless it gets shared to them later. Use it to test hooks without spamming followers.</li>
+      <li><b>Add reels.</b> Drop 1 to 4 videos. The app checks each one (length, size, shape) before anything is sent.</li>
+      <li><b>Set up each reel.</b> Write the caption, drag the slider to choose the cover frame, and choose what happens after the trial:
+        <br>· <b>I'll decide later</b>: the reel stays with non-followers until someone shares it to followers from the Instagram app.
+        <br>· <b>Share automatically if it does well</b>: Instagram shares it to followers by itself if it performs well with non-followers.</li>
+      <li><b>Pick when.</b> "Post now" goes out about a minute after queuing. "Schedule" posts at that time. All times are in your computer's time zone.</li>
+      <li><b>Review &amp; queue.</b> Nothing reaches Instagram until you press the final button in the review window.</li>
+      <li><b>Watch the Queue tab.</b> Posting takes 1 to 3 minutes per reel. When a reel is live you get a "View on Instagram" link.</li>
+      <li><b>Two things only the Instagram app can do.</b> Instagram does not let apps set <b>Hide like count</b> or <b>Translations</b>. After a reel is live, open it in the Instagram app, tap ⋯, and set them. The Queue tab gives you a checklist for each reel.</li>
+      <li><b>If something fails</b>, the Queue tab says why in plain words and has a "Try again" button. Daily limit: 100 posts in any 24 hours.</li>
+    </ol>
+  </div>
+  <div class="dlg-foot"><button class="btn primary" onclick="this.closest('dialog').close()">Got it</button></div>
+</dialog>
+
+<div id="live" aria-live="polite" style="position:absolute;left:-9999px"></div>
+
+<script>
+/* ===================== state & helpers ===================== */
+const LIMITS = { caption: 2200, tags: 30, mentions: 20, minSec: 3, maxSec: 900, maxMB: 300, collabs: 3 };
+const drafts = [];
+let jobs = [], account = null, currentTab = 'new';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const tzShort = new Date().toLocaleTimeString([], { timeZoneName:'short' }).split(' ').pop();
+const fmtDur = s => { s = Math.round(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const fmtWhen = d => d.toLocaleString([], { weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit' });
+const toLocalInput = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+function fmtRel(m) { const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
+  return [d && `${d}d`, h && `${h}h`, (!d && mm) && `${mm}m`].filter(Boolean).join(' ') || '0m'; }
+function relTime(d) { const m = Math.round((d - Date.now()) / 60000);
+  return m < -1 ? `${fmtRel(-m)} ago` : m <= 1 ? 'within a minute' : `in ${fmtRel(m)}`; }
+function toast(text, undo) {
+  document.querySelector('.toast')?.remove();
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = `<span>${esc(text)}</span>`;
+  if (undo) { const b = document.createElement('button'); b.textContent = 'Undo'; b.onclick = () => { undo(); t.remove(); }; t.appendChild(b); }
+  document.body.appendChild(t); $('live').textContent = text;
+  setTimeout(() => t.remove(), undo ? 7000 : 4000);
+}
+const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+                set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+
+/* ===================== tabs ===================== */
+function showTab(t) {
+  currentTab = t;
+  $('tabNew').setAttribute('aria-selected', t === 'new'); $('tabQueue').setAttribute('aria-selected', t === 'queue');
+  $('viewNew').hidden = t !== 'new'; $('viewQueue').hidden = t !== 'queue';
+  renderBar();
+}
+$('tabNew').onclick = () => showTab('new');
+$('tabQueue').onclick = () => showTab('queue');
+$('helpBtn').onclick = () => $('helpDlg').showModal();
+
+/* ===================== engine connection ===================== */
+// The page can be opened from the Mac itself (same origin) or from GitHub Pages. On Pages it looks up the
+// engine's current address in config.json, which the engine rewrites every time its tunnel restarts.
+const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+const CONFIG_URL = 'https://api.github.com/repos/ritwik-turing/trial-reel-poster/contents/config.json';
+let API = LOCAL ? '' : null, session = store.get('session', '');
+async function findEngine() {
+  if (LOCAL) return (API = '');
+  try {
+    const c = await fetch(CONFIG_URL, { cache: 'no-store' }).then(r => r.json());
+    API = JSON.parse(atob(c.content)).api;
+  } catch {
+    try { API = (await fetch('config.json?t=' + Date.now()).then(r => r.json())).api; } catch { API = null; }
+  }
+  return API;
+}
+async function call(path, opts = {}, retried) {
+  if (API === null && !(await findEngine())) throw new Error('offline');
+  let r;
+  try { r = await fetch(API + path, { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + session } }); }
+  catch { if (!retried && !LOCAL) { await findEngine(); return call(path, opts, true); } throw new Error('offline'); }
+  if (r.status === 401) { askLogin(); throw new Error('login'); }
+  return r;
+}
+const mediaUrl = (file, t) => `${API}/media/${encodeURIComponent(file)}?s=${encodeURIComponent(session)}#t=${t}`;
+function askLogin() {
+  if ($('loginDlg').open) return;
+  $('loginErr').textContent = ''; $('pw').value = ''; $('loginDlg').showModal(); $('pw').focus();
+}
+$('loginDlg').addEventListener('cancel', e => e.preventDefault());
+$('loginForm').onsubmit = async e => {
+  e.preventDefault();
+  $('loginBtn').disabled = true; $('loginBtn').textContent = 'Checking…'; $('loginErr').textContent = '';
+  try {
+    if (API === null && !(await findEngine())) throw new Error('offline');
+    const r = await fetch(API + '/api/login', { method: 'POST', body: JSON.stringify({ password: $('pw').value }) });
+    if (r.status === 401) { $('loginErr').textContent = "That password didn't work. Check it with Ritwik."; return; }
+    session = (await r.json()).session; store.set('session', session);
+    $('loginDlg').close(); boot();
+  } catch {
+    $('loginErr').textContent = "Can't reach Ritwik's Mac right now. It may be off or restarting. Try again in a minute.";
+  } finally { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Sign in'; }
+};
+$('signOutBtn').onclick = () => { store.set('session', ''); session = ''; askLogin(); };
+
+/* ===================== account / health ===================== */
+async function loadAccount() {
+  try { account = await call('/api/account').then(r => r.json()); }
+  catch (e) { if (e.message === 'login') return; account = { error: 'offline' }; }
+  const pill = $('acctPill');
+  $('signOutBtn').hidden = LOCAL || !session;
+  if (account.error === 'offline') pill.innerHTML = `<span class="dot bad"></span><span>${LOCAL ? 'App is not running' : "Can't reach Ritwik's Mac"}</span>`;
+  else if (account.error) pill.innerHTML = '<span class="dot bad"></span><span>Instagram not connected</span>';
+  else {
+    pill.innerHTML = `<span class="dot ok"></span><span>Posting to <b style="color:var(--bone)">@${esc(account.username)}</b></span>`;
+    const q = $('quotaPill'); q.hidden = false;
+    q.textContent = `${account.quota_used} of ${account.quota_total} posts used today`;
+  }
+  renderBanners(); renderBar();
+}
+function renderBanners() {
+  const b = [];
+  if (account?.error === 'offline')
+    b.push(['bad', LOCAL ? 'The app has stopped.' : "Can't reach Ritwik's Mac.", "The posting engine is off or restarting. Scheduled reels are safe and post when it's back. Your reels on this page are kept until you close the tab. If this lasts more than 5 minutes, message Ritwik."]);
+  else if (account?.error)
+    b.push(['bad', "Instagram isn't connected.", "Reels can't post until Ritwik reconnects the account. You can still set up reels, but you can't queue them yet."]);
+  if (account && !account.error && account.media_link === false)
+    b.push(['warn', 'Getting ready to post…', 'The secure video link is starting. This usually takes under 30 seconds. Reels queued now will wait for it.']);
+  if (account && !account.error && account.quota_used >= account.quota_total)
+    b.push(['bad', 'Daily limit reached.', 'Instagram allows 100 app posts in any 24 hours. Schedule reels for later instead.']);
+  $('banners').innerHTML = b.map(([k, t, d]) => `<div class="banner ${k}" role="status"><span class="dot ${k}" style="margin-top:7px"></span><div><b>${t}</b>${d}</div></div>`).join('');
+}
+
+/* ===================== adding videos ===================== */
+const drop = $('drop');
+$('pick').onchange = e => { addFiles(e.target.files); e.target.value = ''; };
+drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('pick').click(); } };
+drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = () => drop.classList.remove('over');
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); };
+
+function addFiles(files) {
+  let skipped = 0;
+  for (const f of files) {
+    if (!f.type.startsWith('video/')) { skipped++; continue; }
+    const d = { key: crypto.randomUUID(), f, url: URL.createObjectURL(f), caption: '', graduation: 'MANUAL',
+                when: 'now', at: '', cover: 0, collaborators: [], comments_off: false, meta: null, checks: [] };
+    drafts.push(d); probe(d);
+  }
+  if (skipped) toast(`Skipped ${skipped} file${skipped > 1 ? 's' : ''} that ${skipped > 1 ? "aren't videos" : "isn't a video"}`);
+  renderDrafts();
+}
+function probe(d) {   // read length and shape in the browser, then check against Instagram's rules
+  const v = document.createElement('video'); v.preload = 'metadata'; v.muted = true; v.src = d.url;
+  v.onloadedmetadata = () => { d.meta = { dur: v.duration, w: v.videoWidth, h: v.videoHeight }; d.cover = Math.min(1, v.duration / 2); runChecks(d); renderDrafts(); };
+  v.onerror = () => { d.meta = { error: true }; runChecks(d); renderDrafts(); };
+}
+function runChecks(d) {
+  const c = [], mb = d.f.size / 1048576, m = d.meta;
+  if (m?.error) c.push(['bad', "This file can't be read as a video. Export it again as MP4 (H.264)."]);
+  if (m && !m.error) {
+    if (m.dur < LIMITS.minSec) c.push(['bad', `Too short (${m.dur.toFixed(1)} s). Reels must be at least 3 seconds.`]);
+    if (m.dur > LIMITS.maxSec) c.push(['bad', `Too long (${fmtDur(m.dur)}). Reels can be at most 15 minutes.`]);
+    const r = m.w / m.h;
+    if (r > 0.6 || r < 0.5) c.push(['warn', `Not vertical 9:16 (${m.w}×${m.h}). Instagram will crop it or add bars.`]);
+  }
+  if (mb > LIMITS.maxMB) c.push(['bad', `Too big (${Math.round(mb)} MB). Instagram accepts up to 300 MB. Export at a lower bitrate.`]);
+  d.checks = c;
+}
+
+/* ===================== validation ===================== */
+const capStats = s => ({ len: [...s].length, tags: (s.match(/(^|\s)#[\p{L}\p{N}_]+/gu) || []).length, mentions: (s.match(/(^|\s)@[\w.]+/g) || []).length });
+function issues(d) {
+  const out = d.checks.filter(c => c[0] === 'bad').map(c => c[1]);
+  const cap = capStats(d.caption);
+  if (cap.len > LIMITS.caption) out.push('Caption is over 2,200 characters.');
+  if (cap.tags > LIMITS.tags) out.push('More than 30 hashtags.');
+  if (cap.mentions > LIMITS.mentions) out.push('More than 20 @mentions.');
+  if (d.when === 'later') {
+    if (!d.at) out.push('Pick a date and time, or switch to "Post now".');
+    else if (new Date(d.at) < Date.now() - 60000) out.push('The scheduled time is in the past.');
+  }
+  if (d.collaborators.length > LIMITS.collabs) out.push('At most 3 collaborators.');
+  return out;
+}
+
+/* ===================== reel cards ===================== */
+function renderDrafts() {
+  $('setup').hidden = !drafts.length;
+  drop.classList.toggle('compact', drafts.length > 0);
+  $('dropTitle').textContent = drafts.length ? '+ Add more reels' : 'Drop your reels here, or click to choose';
+  const box = $('reels');
+  [...box.children].forEach(el => { if (!drafts.find(d => d.key === el.dataset.key)) el.remove(); });
+  drafts.forEach((d, i) => {
+    let el = box.querySelector(`[data-key="${d.key}"]`);
+    if (!el) el = buildCard(d);
+    if (box.children[i] !== el) box.insertBefore(el, box.children[i] || null);
+    refreshCard(d, el, i);
+  });
+  renderBar();
+}
+
+function buildCard(d) {
+  const el = document.createElement('article'); el.className = 'card'; el.dataset.key = d.key;
+  const id = s => `${s}-${d.key}`;
+  el.innerHTML = `
+    <div class="preview">
+      <video src="${d.url}" muted playsinline preload="metadata" controls></video>
+      <div class="cover">
+        <div class="lbl"><label for="${id('cover')}">Cover frame</label><span data-r="coverT">0:00</span></div>
+        <input type="range" id="${id('cover')}" min="0" max="1" step="0.1" value="0" data-k="cover">
+        <div class="help">Drag to pick the thumbnail people see before they tap.</div>
+      </div>
+    </div>
+    <div class="fields">
+      <div class="cardhead">
+        <div style="min-width:0"><div class="name" data-r="title"></div><div class="meta" data-r="meta"></div></div>
+        <button class="iconbtn" data-act="remove">Remove</button>
+      </div>
+      <div data-r="checks"></div>
+      <div class="field">
+        <label for="${id('cap')}">Caption</label>
+        <textarea id="${id('cap')}" data-k="caption" placeholder="Hook first. The first line is all most people see before 'more'."></textarea>
+        <div class="counters" data-r="counters"></div>
+      </div>
+      <div class="field">
+        <span class="label" id="${id('gl')}">After the trial</span>
+        <div class="choices" role="radiogroup" aria-labelledby="${id('gl')}">
+          <label class="choice"><input type="radio" name="${id('g')}" value="MANUAL" data-k="graduation" checked>
+            <b>I'll decide later</b><span>Stays with non-followers. Share it to followers from the Instagram app when you're ready.</span></label>
+          <label class="choice"><input type="radio" name="${id('g')}" value="SS_PERFORMANCE" data-k="graduation">
+            <b>Share automatically if it does well</b><span>Instagram shares it to followers by itself if non-followers respond well.</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <span class="label" id="${id('wl')}">When to post</span>
+        <div class="choices" role="radiogroup" aria-labelledby="${id('wl')}">
+          <label class="choice"><input type="radio" name="${id('w')}" value="now" data-k="when" checked>
+            <b>Post now</b><span>Goes out about a minute after you queue it.</span></label>
+          <label class="choice"><input type="radio" name="${id('w')}" value="later" data-k="when">
+            <b>Schedule</b><span>Posts at the time you pick (${esc(tzShort)}).</span></label>
+        </div>
+        <div class="when-row" data-r="whenRow" hidden>
+          <input type="datetime-local" data-k="at" aria-label="Scheduled date and time">
+          <span class="rel" data-r="rel"></span>
+        </div>
+      </div>
+      <details class="more">
+        <summary>More options: collaborators, comments</summary>
+        <div class="inner">
+          <div class="field">
+            <label for="${id('col')}">Collaborators <span style="color:var(--mute);font-weight:400">(optional, up to 3)</span></label>
+            <input type="text" id="${id('col')}" data-k="collaborators" placeholder="@username, @another">
+            <div class="help">Each person gets an invite. Once they accept, the reel also shows on their profile.</div>
+          </div>
+          <label class="switch"><input type="checkbox" data-k="comments_off">
+            <span><b style="font-size:14px">Turn off comments</b><br><span class="help">Comments are switched off right after the reel goes live.</span></span></label>
+        </div>
+      </details>
+      <div class="after"><b>After it's live:</b> set <b>Hide like count</b> and <b>Translations</b> in the Instagram app (⋯ on the reel). Instagram doesn't let apps change these. The Queue tab gives you a checklist.</div>
+    </div>`;
+  el.querySelector('[data-act=remove]').setAttribute('aria-label', `Remove ${d.f.name}`);
+  const video = el.querySelector('video');
+  el.querySelectorAll('[data-k]').forEach(inp => {
+    const k = inp.dataset.k;
+    inp.addEventListener('input', () => {
+      if (k === 'cover') { d.cover = +inp.value; video.pause(); video.currentTime = d.cover; }
+      else if (k === 'collaborators') d.collaborators = inp.value.split(/[,\s]+/).map(s => s.replace(/^@/, '').trim()).filter(Boolean);
+      else if (k === 'comments_off') d.comments_off = inp.checked;
+      else if (inp.type === 'radio') { if (inp.checked) d[k] = inp.value; }
+      else d[k] = inp.value;
+      if (k === 'when' && d.when === 'later' && !d.at) { const t = new Date(Date.now() + 3600000); t.setMinutes(0, 0, 0); d.at = toLocalInput(t); }
+      refreshCard(d, el, drafts.indexOf(d)); renderBar();
+    });
+  });
+  el.querySelector('[data-act=remove]').onclick = () => {
+    const i = drafts.indexOf(d); drafts.splice(i, 1); renderDrafts();
+    toast(`Removed ${d.f.name}`, () => { drafts.splice(i, 0, d); renderDrafts(); });
+  };
+  return el;
+}
+
+function refreshCard(d, el, i) {
+  const q = s => el.querySelector(`[data-r=${s}]`);
+  q('title').textContent = `Reel ${i + 1} · ${d.f.name}`;
+  const mb = (d.f.size / 1048576).toFixed(1);
+  q('meta').innerHTML = d.meta && !d.meta.error
+    ? `<span class="chip">${fmtDur(d.meta.dur)}</span><span class="chip">${d.meta.w}×${d.meta.h}</span><span class="chip">${mb} MB</span>` +
+      (d.checks.length ? '' : '<span class="chip ok">✓ Ready for Instagram</span>')
+    : d.meta ? '' : '<span class="chip">Checking video…</span>';
+  q('checks').innerHTML = d.checks.map(([k, t]) => `<div class="msg ${k}">${k === 'bad' ? '✕' : '!'} ${esc(t)}</div>`).join('');
+  const r = el.querySelector('[data-k=cover]');
+  if (d.meta?.dur) { r.max = Math.max(0.1, d.meta.dur - 0.1).toFixed(1); if (Math.abs(+r.value - d.cover) > 0.05) { r.value = d.cover; el.querySelector('video').currentTime = d.cover; } }
+  q('coverT').textContent = `${fmtDur(Math.floor(d.cover))}.${Math.floor((d.cover % 1) * 10)}`;
+  const s = capStats(d.caption);
+  q('counters').innerHTML =
+    `<span class="${s.len > LIMITS.caption ? 'over' : ''}">${s.len.toLocaleString()} / 2,200 characters</span>` +
+    `<span class="${s.tags > LIMITS.tags ? 'over' : ''}">${s.tags} / 30 hashtags</span>` +
+    `<span class="${s.mentions > LIMITS.mentions ? 'over' : ''}">${s.mentions} / 20 mentions</span>`;
+  el.querySelectorAll('[data-k=when]').forEach(x => x.checked = x.value === d.when);
+  q('whenRow').hidden = d.when !== 'later';
+  const atIn = el.querySelector('[data-k=at]');
+  atIn.min = toLocalInput(new Date());
+  if (atIn.value !== d.at) atIn.value = d.at;
+  const at = d.at ? new Date(d.at) : null;
+  q('rel').innerHTML = d.when === 'later' && at
+    ? (at < Date.now() - 60000 ? '<span style="color:var(--bad)">That time has already passed</span>' : `${esc(fmtWhen(at))} · ${relTime(at)}`) : '';
+  el.classList.toggle('has-error', issues(d).length > 0);
+}
+
+/* ===================== action bar ===================== */
+function renderBar() {
+  const n = drafts.length;
+  $('draftCount').hidden = !n; $('draftCount').textContent = n;
+  $('actionbar').hidden = !n || currentTab !== 'new';
+  if (!n) return;
+  const now = drafts.filter(d => d.when === 'now').length, later = n - now;
+  const bad = drafts.reduce((a, d) => a + issues(d).length, 0), pending = drafts.some(d => !d.meta);
+  const parts = [`<b>${n} reel${n > 1 ? 's' : ''}</b>`];
+  if (now) parts.push(`${now} posting now`);
+  if (later) parts.push(`${later} scheduled`);
+  $('summary').innerHTML = parts.join(' · ') + (bad ? ` · <span class="issues">${bad} thing${bad > 1 ? 's' : ''} to fix (marked in red)</span>` : '');
+  $('reviewBtn').disabled = bad > 0 || pending || !!account?.error;
+  $('reviewBtn').title = pending ? 'Still checking videos…' : bad ? 'Fix the items marked in red first' : account?.error ? "Instagram isn't connected" : '';
+}
+
+/* ===================== schedule all ===================== */
+$('spreadBtn').onclick = () => {
+  const t = new Date(Date.now() + 3600000); t.setMinutes(0, 0, 0);
+  $('spreadStart').value = toLocalInput(t); $('spreadStart').min = toLocalInput(new Date());
+  $('spreadTz').textContent = `Time zone: ${tzName} (${tzShort})`; $('spreadErr').textContent = '';
+  $('spreadDlg').showModal();
+};
+$('spreadApply').onclick = e => {
+  const v = $('spreadStart').value, start = new Date(v), gap = Math.max(0, +$('spreadGap').value || 0);
+  if (!v || isNaN(start)) { e.preventDefault(); $('spreadErr').textContent = 'Pick a start date and time.'; return; }
+  if (start < Date.now()) { e.preventDefault(); $('spreadErr').textContent = 'The start time is in the past.'; return; }
+  drafts.forEach((d, i) => { d.when = 'later'; d.at = toLocalInput(new Date(start.getTime() + i * gap * 60000)); });
+  renderDrafts(); toast(`Scheduled ${drafts.length} reel${drafts.length > 1 ? 's' : ''} from ${fmtWhen(start)}`);
+};
+
+/* ===================== review & queue ===================== */
+const gradLabel = g => g === 'SS_PERFORMANCE' ? 'Trial · auto-share if it does well' : "Trial · you'll decide later";
+$('reviewBtn').onclick = () => {
+  const n = drafts.length;
+  $('reviewTitle').textContent = `queue ${n} trial reel${n > 1 ? 's' : ''}?`;
+  $('reviewSub').textContent = 'Check everything once. After you confirm, the videos are copied into the app and queued.';
+  $('reviewList').innerHTML = drafts.map((d, i) => `
+    <div class="rv" data-key="${d.key}">
+      <video src="${d.url}#t=${d.cover}" muted preload="metadata"></video>
+      <div style="min-width:0">
+        <div class="t">${i + 1}. ${esc(d.caption.split('\n')[0] || '(no caption)')}</div>
+        <div class="s">${d.when === 'now' ? 'Posts now' : 'Posts ' + esc(fmtWhen(new Date(d.at)))} · ${gradLabel(d.graduation)}${d.comments_off ? ' · comments off' : ''}${d.collaborators.length ? ' · with @' + d.collaborators.map(esc).join(', @') : ''}</div>
+        <div class="progress" hidden><i></i></div>
+      </div>
+    </div>`).join('') +
+    `<div class="after" style="margin-top:12px">Reminder: <b>Hide like count</b> and <b>Translations</b> are set in the Instagram app after each reel is live.</div>`;
+  $('reviewGo').disabled = false; $('reviewBack').disabled = false;
+  $('reviewGo').textContent = `Queue ${n} reel${n > 1 ? 's' : ''}`;
+  $('reviewDlg').showModal();
+};
+$('reviewBack').onclick = () => $('reviewDlg').close();
+$('reviewDlg').addEventListener('cancel', e => { if ($('reviewBack').disabled) e.preventDefault(); });
+
+const CHUNK = 32 * 1048576;   // Cloudflare refuses single requests over 100 MB
+function sendChunk(url, blob, onProgress) {
+  return new Promise((res, rej) => {
+    const x = new XMLHttpRequest();
+    x.open('POST', url); x.setRequestHeader('Authorization', 'Bearer ' + session);
+    x.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded); };
+    x.onload = () => x.status === 200 ? res(JSON.parse(x.responseText)) : rej(new Error(x.status === 401 ? 'You were signed out' : 'Copying a video failed'));
+    x.onerror = () => rej(new Error("Lost the connection to Ritwik's Mac"));
+    x.send(blob);
+  });
+}
+async function upload(d, bar) {
+  let file = '', size = d.f.size;
+  for (let off = 0; off < size || off === 0; off += CHUNK) {
+    const q = off === 0 ? `name=${encodeURIComponent(d.f.name)}&offset=0` : `file=${encodeURIComponent(file)}&offset=${off}`;
+    const r = await sendChunk(`${API}/api/upload?${q}`, d.f.slice(off, off + CHUNK), n => bar.style.width = ((off + n) / size * 100) + '%');
+    file = r.file;
+    if (size === 0) break;
+  }
+  return file;
+}
+$('reviewGo').onclick = async () => {
+  $('reviewGo').disabled = true; $('reviewBack').disabled = true;
+  $('reviewSub').textContent = 'Copying videos into the app. Keep this tab open, it takes a few seconds per reel.';
+  const out = [];
+  try {
+    for (const [i, d] of drafts.entries()) {
+      $('reviewGo').textContent = `Copying ${i + 1} of ${drafts.length}…`;
+      const p = $('reviewList').querySelector(`[data-key="${d.key}"] .progress`); p.hidden = false;
+      const file = await upload(d, p.querySelector('i'));
+      out.push({ file, name: d.f.name, caption: d.caption, graduation: d.graduation, share_to_feed: true,
+                 comments_off: d.comments_off, thumb_offset_ms: Math.round(d.cover * 1000),
+                 collaborators: d.collaborators.slice(0, 3),
+                 run_at: d.when === 'later' ? new Date(d.at).toISOString() : null });
+    }
+    const r = await call('/api/jobs', { method: 'POST', body: JSON.stringify({ reels: out }) });
+    if (!r.ok) throw new Error('The app could not save the queue');
+  } catch (e) {
+    $('reviewSub').innerHTML = `<span style="color:var(--bad)">${esc(e.message === 'offline' ? "Can't reach Ritwik's Mac" : e.message)}. Nothing was queued. Try again in a minute.</span>`;
+    $('reviewGo').disabled = false; $('reviewBack').disabled = false; $('reviewGo').textContent = 'Try again';
+    return;
+  }
+  const n = drafts.length;
+  drafts.splice(0).forEach(d => URL.revokeObjectURL(d.url));
+  $('reviewDlg').close(); renderDrafts(); await loadJobs(); showTab('queue');
+  toast(`${n} reel${n > 1 ? 's' : ''} queued`);
+};
+
+/* ===================== queue ===================== */
+const STEPS = ['Sending video', 'Instagram processing', 'Publishing'];
+function stepper(step) {
+  const at = { processing: 1, publishing: 2 }[step] ?? 0;
+  return `<div class="stepper">${STEPS.map((l, i) => `<span class="${i < at ? 'done' : i === at ? 'now' : ''}">${i < at ? '✓ ' : ''}${l}</span>`).join('')}</div>`;
+}
+function humanError(raw = '') {
+  const r = raw.toLowerCase();
+  if (r.includes('interrupted')) return 'The app closed while this reel was posting. Check Instagram before trying again, it may already be live.';
+  if (r.includes('decrypt') || r.includes('"code":190') || r.includes('access token') || r.includes('session has expired')) return 'The Instagram connection expired. Ask Ritwik to reconnect it, then press Try again.';
+  if (r.includes('tunnel') || r.includes('public media link') || r.includes('video_url')) return "The app couldn't make a link for Instagram to fetch the video. Restart the app, then press Try again.";
+  if (r.includes('processing failed')) return "Instagram couldn't process this video. Export it again as MP4 (H.264, AAC audio), vertical 9:16, and add it again.";
+  if (r.includes('timed out')) return 'Instagram took more than 10 minutes to process this video. Press Try again. If it fails twice, export a smaller file.';
+  if (r.includes('limit') || r.includes('quota')) return 'The daily limit of 100 posts was reached. Try again later.';
+  if (r.includes('aspect') || r.includes('duration') || r.includes('format')) return "Instagram didn't accept this video's format. Export it as a vertical MP4, 3 seconds to 15 minutes.";
+  return 'Something went wrong while posting. Press Try again. If it keeps failing, send Ritwik the details below.';
+}
+async function loadJobs() {
+  try { jobs = (await call('/api/jobs').then(r => r.json())).jobs; } catch { return; }
+  renderQueue();
+}
+function jobRow(j) {
+  const when = new Date(j.posted_at || j.run_at);
+  const cap = esc((j.caption || '').split('\n')[0] || '(no caption)');
+  const thumb = `<video src="${mediaUrl(j.file, (j.thumb_offset_ms || 0) / 1000)}" muted preload="metadata"></video>`;
+  let status = '', acts = '';
+  if (j.state === 'queued') {
+    if (when <= Date.now()) {
+      status = `<div class="s"><span class="spin"></span> Starting in a few seconds…</div>${stepper('')}`;
+      acts = `<button class="btn small danger" data-a="cancel">Cancel</button>`;
+    } else {
+      status = `<div class="s">Posts ${esc(fmtWhen(when))} · ${relTime(when)}</div>`;
+      acts = `<button class="btn small secondary" data-a="postnow">Post now</button><button class="btn small secondary" data-a="edit">Change time</button><button class="btn small danger" data-a="cancel">Cancel</button>`;
+    }
+  } else if (j.state === 'posting') {
+    status = `<div class="s"><span class="spin"></span> Posting now. Usually 1 to 3 minutes.</div>${stepper(j.step)}`;
+  } else if (j.state === 'failed') {
+    status = `<div class="err">${esc(humanError(j.error))}<details><summary>Details for Ritwik</summary>${esc(j.error)}</details></div>`;
+    acts = `<button class="btn small primary" data-a="retry">Try again</button>`;
+  } else if (j.state === 'posted') {
+    const done = store.get('todo-' + j.id, {});
+    status = `<div class="s" style="color:var(--ok)">✓ Live since ${esc(fmtWhen(when))}</div>
+      <div class="todo"><span class="help" style="margin:0">Finish in the Instagram app (⋯ on the reel):</span>
+        <label><input type="checkbox" data-todo="likes" ${done.likes ? 'checked' : ''}><span>Hide like count</span></label>
+        <label><input type="checkbox" data-todo="translations" ${done.translations ? 'checked' : ''}><span>Set Translations</span></label></div>`;
+    acts = j.permalink ? `<a class="btn small secondary" href="${esc(j.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">View on Instagram ↗</a>`
+                       : `<span class="chip">Open the profile to see it</span>`;
+  } else if (j.state === 'cancelled') {
+    status = `<div class="s">Cancelled. Nothing was posted.</div>`;
+  }
+  return `<div class="job ${j.state}" data-id="${j.id}">${thumb}
+    <div style="min-width:0"><div class="t">${cap}</div>
+      <div class="s" style="font-size:13px">${esc(gradLabel(j.graduation))}${j.comments_off ? ' · comments off' : ''}</div>
+      ${status}<div data-r="edit"></div></div>
+    <div class="acts">${acts}</div></div>`;
+}
+function renderQueue() {
+  updateCounts();
+  if (document.querySelector('#queue .reschedule')) return;   // don't redraw while a time is being edited
+  const by = s => jobs.filter(j => j.state === s);
+  const groups = [
+    ['Needs attention', by('failed').reverse()],
+    ['Posting now', [...by('posting'), ...by('queued').filter(j => new Date(j.run_at) <= Date.now())]],
+    ['Scheduled', by('queued').filter(j => new Date(j.run_at) > Date.now()).sort((a, b) => new Date(a.run_at) - new Date(b.run_at))],
+    ['Live on Instagram', by('posted').sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at)).slice(0, 30)],
+    ['Cancelled', by('cancelled').slice(-10).reverse()],
+  ].filter(([, l]) => l.length);
+  const html = groups.length
+    ? groups.map(([t, l]) => `<div class="group"><h3>${t} (${l.length})</h3>${l.map(jobRow).join('')}</div>`).join('')
+    : `<div class="empty"><b style="color:var(--bone)">Nothing queued yet.</b><br>Reels you queue from the "New reels" tab show up here with their status.</div>`;
+  if ($('queue').dataset.html !== html) { $('queue').innerHTML = html; $('queue').dataset.html = html; }
+}
+function updateCounts() {
+  const active = jobs.filter(j => ['queued', 'posting'].includes(j.state)).length, failed = jobs.filter(j => j.state === 'failed').length;
+  const c = $('queueCount'); c.hidden = !(active || failed);
+  c.textContent = failed || active; c.classList.toggle('alert', failed > 0);
+  c.title = failed ? `${failed} need attention` : `${active} waiting or posting`;
+}
+async function act(path, body) {
+  try { await call(path, { method: 'POST', body: JSON.stringify(body) }); }
+  catch (e) { if (e.message !== 'login') toast("Can't reach Ritwik's Mac. Nothing changed, try again in a minute."); }
+  await loadJobs();
+}
+$('queue').addEventListener('click', async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const row = b.closest('.job'), id = row.dataset.id, j = jobs.find(x => x.id === id), a = b.dataset.a;
+  if (a === 'cancel' && confirm('Cancel this reel? It will not be posted.')) { await act('/api/cancel', { id }); toast('Cancelled. Nothing was posted.'); }
+  if (a === 'postnow' && confirm('Post this reel to Instagram now?')) { await act('/api/postnow', { id }); toast('Posting within a minute'); }
+  if (a === 'retry' && confirm(j.error?.includes('Interrupted') ? 'Did you check Instagram? If the reel is already live, trying again will post it twice.' : 'Try posting this reel again now?')) { await act('/api/retry', { id }); toast('Trying again'); }
+  if (a === 'edit') {
+    row.querySelector('[data-r=edit]').innerHTML = `<div class="reschedule"><input type="datetime-local" value="${toLocalInput(new Date(j.run_at))}" min="${toLocalInput(new Date())}" aria-label="New date and time">
+      <button class="btn small primary" data-a="save">Save time</button><button class="btn small secondary" data-a="close">Keep current time</button></div>`;
+  }
+  if (a === 'close') { row.querySelector('[data-r=edit]').innerHTML = ''; renderQueue(); }
+  if (a === 'save') {
+    const v = row.querySelector('.reschedule input').value, d = new Date(v);
+    if (!v || d < Date.now()) { toast('Pick a time in the future'); return; }
+    row.querySelector('[data-r=edit]').innerHTML = '';
+    await act('/api/reschedule', { id, run_at: d.toISOString() }); toast(`Moved to ${fmtWhen(d)}`);
+  }
+});
+$('queue').addEventListener('change', e => {
+  const t = e.target.dataset.todo; if (!t) return;
+  const id = e.target.closest('.job').dataset.id, done = store.get('todo-' + id, {});
+  done[t] = e.target.checked; store.set('todo-' + id, done);
+});
+
+/* ===================== boot ===================== */
+window.addEventListener('beforeunload', e => { if (drafts.length) { e.preventDefault(); e.returnValue = ''; } });
+let booted = false;
+async function boot() {
+  await findEngine();
+  if (!session && !LOCAL) return askLogin();
+  await loadAccount(); await loadJobs();
+  if (session && !$('loginDlg').open && !store.get('seenHelp', false)) { $('helpDlg').showModal(); store.set('seenHelp', true); }
+  if (!booted) { booted = true; setInterval(loadJobs, 4000); setInterval(loadAccount, 60000); }
+}
+boot();
+setInterval(() => drafts.forEach((d, i) => { const el = document.querySelector(`.card[data-key="${d.key}"]`); if (el) refreshCard(d, el, i); }), 30000);
+
+</script>
+</body>
+</html>
