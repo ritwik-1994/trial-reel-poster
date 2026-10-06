@@ -200,7 +200,7 @@
 
   <section id="viewQueue" role="tabpanel" aria-labelledby="tabQueue" hidden>
     <div id="queue"></div>
-    <p class="help" style="margin-top:24px">Scheduled reels post only while this app is running on Ritwik's Mac. If the Mac is off at the scheduled time, the reel posts as soon as the app is back on.</p>
+    <p class="help" style="margin-top:24px">Scheduled reels post on time from the cloud, even when every laptop is closed. Times are checked every minute.</p>
   </section>
 </main>
 
@@ -312,12 +312,14 @@ $('tabQueue').onclick = () => showTab('queue');
 $('helpBtn').onclick = () => $('helpDlg').showModal();
 
 /* ===================== engine connection ===================== */
-// The page can be opened from the Mac itself (same origin) or from GitHub Pages. On Pages it looks up the
+// The page can be opened from a local engine (same origin) or from GitHub Pages. On Pages it looks up the
 // engine's current address in config.json, which the engine rewrites every time its tunnel restarts.
 const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
 const CONFIG_URL = 'https://api.github.com/repos/ritwik-turing/trial-reel-poster/contents/config.json';
-let API = LOCAL ? '' : null, session = store.get('session', '');
+const API_OVERRIDE = new URLSearchParams(location.search).get('api');   // for testing against another engine
+let API = API_OVERRIDE ?? (LOCAL ? '' : null), session = store.get('session', '');
 async function findEngine() {
+  if (API_OVERRIDE) return (API = API_OVERRIDE);
   if (LOCAL) return (API = '');
   try {
     const c = await fetch(CONFIG_URL, { cache: 'no-store' }).then(r => r.json());
@@ -351,7 +353,7 @@ $('loginForm').onsubmit = async e => {
     session = (await r.json()).session; store.set('session', session);
     $('loginDlg').close(); boot();
   } catch {
-    $('loginErr').textContent = "Can't reach Ritwik's Mac right now. It may be off or restarting. Try again in a minute.";
+    $('loginErr').textContent = "Can't reach the posting service right now. Check your internet connection and try again in a minute.";
   } finally { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Sign in'; }
 };
 $('signOutBtn').onclick = () => { store.set('session', ''); session = ''; askLogin(); };
@@ -362,7 +364,7 @@ async function loadAccount() {
   catch (e) { if (e.message === 'login') return; account = { error: 'offline' }; }
   const pill = $('acctPill');
   $('signOutBtn').hidden = LOCAL || !session;
-  if (account.error === 'offline') pill.innerHTML = `<span class="dot bad"></span><span>${LOCAL ? 'App is not running' : "Can't reach Ritwik's Mac"}</span>`;
+  if (account.error === 'offline') pill.innerHTML = `<span class="dot bad"></span><span>${LOCAL ? 'App is not running' : "Can't reach the posting service"}</span>`;
   else if (account.error) pill.innerHTML = '<span class="dot bad"></span><span>Instagram not connected</span>';
   else {
     pill.innerHTML = `<span class="dot ok"></span><span>Posting to <b style="color:var(--bone)">@${esc(account.username)}</b></span>`;
@@ -374,7 +376,7 @@ async function loadAccount() {
 function renderBanners() {
   const b = [];
   if (account?.error === 'offline')
-    b.push(['bad', LOCAL ? 'The app has stopped.' : "Can't reach Ritwik's Mac.", "The posting engine is off or restarting. Scheduled reels are safe and post when it's back. Your reels on this page are kept until you close the tab. If this lasts more than 5 minutes, message Ritwik."]);
+    b.push(['bad', LOCAL ? 'The app has stopped.' : "Can't reach the posting service.", "Check your internet connection. Scheduled reels are safe and still post on time. Your reels on this page are kept until you close the tab. If this lasts more than 5 minutes, message Ritwik."]);
   else if (account?.error)
     b.push(['bad', "Instagram isn't connected.", "Reels can't post until Ritwik reconnects the account. You can still set up reels, but you can't queue them yet."]);
   if (account && !account.error && account.media_link === false)
@@ -622,14 +624,14 @@ function sendChunk(url, blob, onProgress) {
     x.open('POST', url); x.setRequestHeader('Authorization', 'Bearer ' + session);
     x.upload.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded); };
     x.onload = () => x.status === 200 ? res(JSON.parse(x.responseText)) : rej(new Error(x.status === 401 ? 'You were signed out' : 'Copying a video failed'));
-    x.onerror = () => rej(new Error("Lost the connection to Ritwik's Mac"));
+    x.onerror = () => rej(new Error("Lost the connection to the posting service"));
     x.send(blob);
   });
 }
 async function upload(d, bar) {
   let file = '', size = d.f.size;
   for (let off = 0; off < size || off === 0; off += CHUNK) {
-    const q = off === 0 ? `name=${encodeURIComponent(d.f.name)}&offset=0` : `file=${encodeURIComponent(file)}&offset=${off}`;
+    const q = (off === 0 ? `name=${encodeURIComponent(d.f.name)}&offset=0` : `file=${encodeURIComponent(file)}&offset=${off}`) + `&total=${size}`;
     const r = await sendChunk(`${API}/api/upload?${q}`, d.f.slice(off, off + CHUNK), n => bar.style.width = ((off + n) / size * 100) + '%');
     file = r.file;
     if (size === 0) break;
@@ -653,7 +655,7 @@ $('reviewGo').onclick = async () => {
     const r = await call('/api/jobs', { method: 'POST', body: JSON.stringify({ reels: out }) });
     if (!r.ok) throw new Error('The app could not save the queue');
   } catch (e) {
-    $('reviewSub').innerHTML = `<span style="color:var(--bad)">${esc(e.message === 'offline' ? "Can't reach Ritwik's Mac" : e.message)}. Nothing was queued. Try again in a minute.</span>`;
+    $('reviewSub').innerHTML = `<span style="color:var(--bad)">${esc(e.message === 'offline' ? "Can't reach the posting service" : e.message)}. Nothing was queued. Try again in a minute.</span>`;
     $('reviewGo').disabled = false; $('reviewBack').disabled = false; $('reviewGo').textContent = 'Try again';
     return;
   }
@@ -673,7 +675,7 @@ function humanError(raw = '') {
   const r = raw.toLowerCase();
   if (r.includes('interrupted')) return 'The app closed while this reel was posting. Check Instagram before trying again, it may already be live.';
   if (r.includes('decrypt') || r.includes('"code":190') || r.includes('access token') || r.includes('session has expired')) return 'The Instagram connection expired. Ask Ritwik to reconnect it, then press Try again.';
-  if (r.includes('tunnel') || r.includes('public media link') || r.includes('video_url')) return "The app couldn't make a link for Instagram to fetch the video. Restart the app, then press Try again.";
+  if (r.includes('tunnel') || r.includes('public media link') || r.includes('video_url')) return "Instagram couldn't fetch the video. Press Try again. If it fails twice, send Ritwik the details below.";
   if (r.includes('processing failed')) return "Instagram couldn't process this video. Export it again as MP4 (H.264, AAC audio), vertical 9:16, and add it again.";
   if (r.includes('timed out')) return 'Instagram took more than 10 minutes to process this video. Press Try again. If it fails twice, export a smaller file.';
   if (r.includes('limit') || r.includes('quota')) return 'The daily limit of 100 posts was reached. Try again later.';
@@ -743,7 +745,7 @@ function updateCounts() {
 }
 async function act(path, body) {
   try { await call(path, { method: 'POST', body: JSON.stringify(body) }); }
-  catch (e) { if (e.message !== 'login') toast("Can't reach Ritwik's Mac. Nothing changed, try again in a minute."); }
+  catch (e) { if (e.message !== 'login') toast("Can't reach the posting service. Nothing changed, try again in a minute."); }
   await loadJobs();
 }
 $('queue').addEventListener('click', async e => {
