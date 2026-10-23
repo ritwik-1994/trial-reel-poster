@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Trial Reel Poster</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,75 +11,179 @@
     --night:#091625; --panel:#0f1f31; --panel-2:#142940; --line:#22384f; --line-2:#2f4a66;
     --bone:#F1E8D6; --dim:#a9b3bd; --mute:#7c8894;
     --agni:#DA8835; --agni-ink:#1a0f04; --jal:#5AAFD0; --ok:#6fcf97; --warn:#e8b64a; --bad:#ef7a6a;
-    --r:14px;
+    --r:14px; --rail:92px;
   }
   * { box-sizing:border-box; }
   [hidden] { display:none !important; }
-  html, body { margin:0; background:var(--night); color:var(--bone); font:16px/1.5 Karla, system-ui, sans-serif; }
+  html, body { margin:0; height:100%; background:var(--night); color:var(--bone); font:16px/1.5 Karla, system-ui, sans-serif; }
+  body { overflow:hidden; }
   button, input, textarea, select { font:inherit; color:inherit; }
   :focus-visible { outline:2px solid var(--jal); outline-offset:2px; border-radius:6px; }
   a { color:var(--jal); }
+  h1, h2 { font:400 26px/1 Anton, sans-serif; text-transform:lowercase; letter-spacing:.4px; margin:0; }
+  ::-webkit-scrollbar { width:10px; height:10px; } ::-webkit-scrollbar-thumb { background:var(--line-2); border-radius:99px; border:2px solid var(--night); }
 
-  header { position:sticky; top:0; z-index:20; background:rgba(9,22,37,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
-  .bar { max-width:1120px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  h1 { font:400 26px/1 Anton, sans-serif; text-transform:lowercase; letter-spacing:.5px; margin:0; }
-  .status { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; align-items:center; }
-  .pill { display:inline-flex; align-items:center; gap:6px; font-size:13px; padding:5px 10px; border-radius:99px; border:1px solid var(--line); color:var(--dim); white-space:nowrap; }
-  .dot { width:8px; height:8px; border-radius:50%; background:var(--mute); flex:none; }
+  /* ---------- app shell: rail + stage, fits the window ---------- */
+  .app { display:grid; grid-template-columns:var(--rail) 1fr; height:100dvh; }
+  .rail { background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:stretch; padding:14px 8px; gap:6px; min-height:0; }
+  .brand { font:400 20px/1 Anton, sans-serif; text-align:center; margin:2px 0 14px; text-transform:lowercase; color:var(--agni); }
+  .nav { position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 4px; border:0; border-radius:12px; background:none; color:var(--dim); cursor:pointer; font-size:12px; font-weight:600; transition:background .15s, color .15s; }
+  .nav svg { width:24px; height:24px; }
+  .nav:hover { background:var(--panel-2); color:var(--bone); }
+  .nav[aria-current=page] { background:rgba(218,136,53,.14); color:var(--agni); }
+  .nav .count { position:absolute; top:4px; right:10px; min-width:18px; padding:0 5px; border-radius:99px; background:var(--panel-2); color:var(--bone); font-size:11px; line-height:18px; text-align:center; }
+  .nav .count.alert { background:var(--bad); color:#1b0a07; }
+  .rail-foot { margin-top:auto; display:flex; flex-direction:column; gap:8px; align-items:center; font-size:11px; color:var(--dim); text-align:center; }
+  .acct { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .acct .dot { width:10px; height:10px; }
+  .meter { width:52px; height:52px; position:relative; }
+  .meter svg { transform:rotate(-90deg); }
+  .meter b { position:absolute; inset:0; display:grid; place-items:center; font-size:11px; color:var(--bone); }
+  .railbtn { background:none; border:1px solid var(--line); color:var(--dim); border-radius:8px; padding:4px 6px; font-size:11px; cursor:pointer; width:100%; }
+  .railbtn:hover { color:var(--bone); border-color:var(--line-2); }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--mute); flex:none; display:inline-block; }
   .dot.ok { background:var(--ok); } .dot.bad { background:var(--bad); } .dot.warn { background:var(--warn); }
-  .linkbtn { background:none; border:0; color:var(--jal); cursor:pointer; padding:4px 2px; font-size:14px; text-decoration:underline; text-underline-offset:3px; }
-  main { max-width:1120px; margin:0 auto; padding:20px 16px 140px; }
-  .tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin-bottom:24px; }
-  .tab { background:none; border:0; border-bottom:2px solid transparent; padding:10px 14px; color:var(--dim); cursor:pointer; font-weight:600; font-size:15px; }
-  .tab[aria-selected=true] { color:var(--bone); border-color:var(--agni); }
-  .count { display:inline-block; min-width:20px; padding:0 6px; margin-left:6px; border-radius:99px; background:var(--panel-2); font-size:12px; line-height:20px; text-align:center; }
-  .count.alert { background:var(--bad); color:#1b0a07; }
-  .banner { border:1px solid var(--line-2); background:var(--panel); border-radius:var(--r); padding:12px 14px; margin-bottom:16px; display:flex; gap:10px; align-items:flex-start; font-size:15px; }
-  .banner.bad { border-color:rgba(239,122,106,.5); }
-  .banner.warn { border-color:rgba(232,182,74,.5); }
+
+  .stage { display:flex; flex-direction:column; min-width:0; min-height:0; }
+  .view { flex:1; display:flex; flex-direction:column; min-height:0; }
+  .viewhead { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:14px 20px 10px; }
+  .viewhead .sub { color:var(--dim); font-size:14px; }
+  .viewhead .grow { flex:1; }
+  #banners:empty { display:none; }
+  #banners { padding:10px 20px 0; display:flex; flex-direction:column; gap:8px; }
+  .banner { border:1px solid var(--line-2); background:var(--panel); border-radius:12px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start; font-size:14px; }
+  .banner.bad { border-color:rgba(239,122,106,.5); } .banner.warn { border-color:rgba(232,182,74,.5); }
   .banner b { display:block; }
 
-  .step { display:flex; align-items:baseline; gap:10px; margin:28px 0 12px; }
-  .step .n { font:400 15px Anton, sans-serif; color:var(--agni-ink); background:var(--agni); width:24px; height:24px; border-radius:50%; display:inline-grid; place-items:center; flex:none; }
-  .step h2 { font:700 19px Karla, sans-serif; margin:0; }
-  .step p { margin:0; color:var(--dim); font-size:14px; }
+  /* ---------- shared controls ---------- */
+  .btn { border:0; border-radius:10px; padding:10px 16px; font-weight:700; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+  .btn.primary { background:var(--agni); color:var(--agni-ink); }
+  .btn.primary:hover { filter:brightness(1.07); }
+  .btn.secondary { background:transparent; border:1px solid var(--line-2); color:var(--bone); font-weight:600; }
+  .btn.secondary:hover { border-color:var(--dim); }
+  .btn.danger { background:transparent; border:1px solid rgba(239,122,106,.6); color:var(--bad); font-weight:600; }
+  .btn.small { padding:6px 11px; font-size:13px; border-radius:8px; }
+  .btn:disabled { opacity:.45; cursor:not-allowed; filter:none; }
+  .iconbtn { background:none; border:1px solid var(--line); color:var(--dim); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:13px; }
+  .iconbtn:hover { color:var(--bone); border-color:var(--line-2); }
+  .chips { display:inline-flex; gap:4px; background:var(--panel); border:1px solid var(--line); border-radius:99px; padding:3px; }
+  .chips button { border:0; background:none; color:var(--dim); padding:6px 12px; border-radius:99px; cursor:pointer; font-size:13px; font-weight:600; white-space:nowrap; }
+  .chips button[aria-pressed=true] { background:var(--panel-2); color:var(--bone); }
+  select.pill { background:var(--panel); border:1px solid var(--line); border-radius:99px; padding:7px 12px; color-scheme:dark; font-size:13px; }
+  .help { color:var(--dim); font-size:13px; margin-top:6px; }
+  .msg { font-size:13px; margin-top:6px; } .msg.bad { color:var(--bad); } .msg.warn { color:var(--warn); }
+  .chip { font-size:12px; padding:2px 8px; border-radius:99px; background:var(--panel-2); color:var(--dim); white-space:nowrap; }
+  .chip.ok { color:var(--ok); }
+  .badge { font-size:11px; padding:1px 7px; border-radius:99px; border:1px solid var(--line-2); color:var(--dim); white-space:nowrap; background:rgba(9,22,37,.7); }
+  .badge.trial { border-color:var(--agni); color:var(--agni); }
+  .badge.maybe { border-style:dashed; }
+  .up { color:var(--ok); } .down { color:var(--bad); }
+  .spin { display:inline-block; width:12px; height:12px; border:2px solid var(--line-2); border-top-color:var(--agni); border-radius:50%; animation:spin .8s linear infinite; vertical-align:-1px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .empty { text-align:center; color:var(--dim); padding:40px 20px; border:1px dashed var(--line); border-radius:var(--r); }
+  textarea, input[type=text], input[type=datetime-local], input[type=number], input[type=password] { width:100%; background:var(--night); border:1px solid var(--line-2); border-radius:10px; padding:10px 12px; color-scheme:dark; }
+  textarea { min-height:110px; resize:vertical; }
+  textarea:focus, input:focus { border-color:var(--jal); outline:none; }
+  kbd { font:600 11px Karla, sans-serif; border:1px solid var(--line-2); border-bottom-width:2px; border-radius:4px; padding:0 5px; color:var(--dim); }
 
-  .drop { display:block; border:2px dashed var(--line-2); border-radius:var(--r); padding:30px 20px; text-align:center; cursor:pointer; transition:.15s; background:var(--panel); }
+  /* ---------- LIBRARY: content wall + inspector ---------- */
+  .benchline { display:flex; gap:16px; flex-wrap:wrap; padding:0 20px 10px; font-size:13px; color:var(--dim); }
+  .benchline b { color:var(--bone); font-variant-numeric:tabular-nums; }
+  .lib-body { flex:1; min-height:0; display:grid; grid-template-columns:1fr 400px; border-top:1px solid var(--line); }
+  .lib-main { overflow:auto; padding:16px 20px 30px; min-width:0; }
+  .wall { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px; }
+  .tile { position:relative; aspect-ratio:9/16; border-radius:12px; overflow:hidden; background:#000; cursor:pointer; border:0; padding:0; text-align:left; color:var(--bone); transition:transform .15s, box-shadow .15s; }
+  .tile img, .tile .noimg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:linear-gradient(160deg, var(--panel-2), #000); }
+  .tile:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.45); }
+  .tile[aria-selected=true] { box-shadow:0 0 0 3px var(--agni), 0 10px 24px rgba(0,0,0,.45); }
+  .tile.lowreach img { filter:saturate(.4) brightness(.7); }
+  .tile .tl { position:absolute; top:8px; left:8px; right:8px; display:flex; justify-content:space-between; gap:4px; align-items:flex-start; }
+  .tile .todo { width:20px; height:20px; border-radius:50%; background:rgba(9,22,37,.8); border:1px solid var(--warn); color:var(--warn); font-size:11px; display:grid; place-items:center; font-weight:700; }
+  .tile .todo.done { border-color:var(--ok); color:var(--ok); }
+  .tile .ov { position:absolute; left:0; right:0; bottom:0; padding:28px 10px 10px; background:linear-gradient(transparent, rgba(0,0,0,.88)); }
+  .tile .lens { font:400 24px/1 Anton, sans-serif; letter-spacing:.3px; font-variant-numeric:tabular-nums; }
+  .tile .lens small { font:600 11px Karla, sans-serif; color:var(--dim); display:block; margin-top:3px; letter-spacing:0; }
+  .tile .more { display:grid; grid-template-columns:1fr; gap:1px; font-size:11px; color:var(--dim); margin-top:6px; max-height:0; overflow:hidden; transition:max-height .2s; }
+  .tile .more b { color:var(--bone); font-weight:700; }
+  .tile:hover .more, .tile:focus-visible .more, .tile[aria-selected=true] .more { max-height:60px; }
+  .tile .date { font-size:11px; color:var(--dim); margin-top:4px; }
+  .inspector { border-left:1px solid var(--line); background:var(--panel); overflow:auto; min-height:0; }
+  .insp-inner { padding:18px; }
+  .insp-top { display:grid; grid-template-columns:110px 1fr; gap:14px; align-items:start; }
+  .insp-top img, .insp-top .noimg { width:110px; aspect-ratio:9/16; object-fit:cover; border-radius:10px; background:#000; display:block; }
+  .insp-cap { font-size:14px; white-space:pre-wrap; max-height:150px; overflow:auto; margin-top:6px; color:var(--bone); }
+  .insp-nav { display:flex; gap:6px; margin-bottom:12px; align-items:center; }
+  .insp-close { display:none; }
+  .dgroup { font-size:11px; text-transform:uppercase; letter-spacing:.9px; color:var(--dim); margin:16px 0 6px; font-weight:700; }
+  .metrics { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px; }
+  .metric { background:var(--night); border-radius:8px; padding:7px 10px; }
+  .metric b { display:block; font-size:18px; font-variant-numeric:tabular-nums; }
+  .metric span { font-size:12px; color:var(--dim); display:block; }
+  .metric small { font-size:11px; color:var(--mute); }
+  .metric b span { display:inline; font-size:inherit; }
+  .switch { display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
+  .switch input { accent-color:var(--agni); width:18px; height:18px; margin-top:2px; flex:none; }
+  .task { display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; padding:6px 0; cursor:pointer; font-size:14px; }
+  .task input { accent-color:var(--ok); width:16px; height:16px; margin-top:3px; }
+  .task small { display:block; color:var(--mute); font-size:12px; }
+  .task input:checked ~ span b { text-decoration:line-through; color:var(--mute); }
+  .explain p { font-size:13px; color:var(--dim); margin:0 0 10px; }
+  .toprank { display:flex; flex-direction:column; gap:6px; }
+  .toprank button { display:grid; grid-template-columns:36px 1fr auto; gap:10px; align-items:center; background:var(--night); border:1px solid transparent; border-radius:10px; padding:6px 10px 6px 6px; cursor:pointer; text-align:left; color:var(--bone); }
+  .toprank button:hover { border-color:var(--line-2); }
+  .toprank img, .toprank .noimg { width:36px; aspect-ratio:9/16; object-fit:cover; border-radius:5px; background:#000; }
+  .toprank .t { font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .toprank b { font-variant-numeric:tabular-nums; }
+  /* table alternative */
+  .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--panel); }
+  table.reels { border-collapse:collapse; width:100%; min-width:900px; font-size:14px; }
+  table.reels th { position:sticky; top:0; background:var(--panel-2); text-align:right; font-weight:600; font-size:12px; color:var(--dim); padding:10px; white-space:nowrap; cursor:pointer; user-select:none; border-bottom:1px solid var(--line-2); }
+  table.reels th:first-child, table.reels td:first-child { text-align:left; }
+  table.reels th[aria-sort] { color:var(--bone); }
+  table.reels th[aria-sort=descending]::after { content:" ↓"; } table.reels th[aria-sort=ascending]::after { content:" ↑"; }
+  table.reels td { padding:8px 10px; border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  table.reels tbody tr { cursor:pointer; }
+  table.reels tbody tr:hover, table.reels tbody tr[aria-selected=true] { background:rgba(218,136,53,.08); }
+  table.reels tr.lowreach { opacity:.55; }
+  .rcell { display:flex; gap:10px; align-items:center; min-width:220px; max-width:300px; }
+  .rcell img, .rcell .noimg { width:30px; aspect-ratio:9/16; object-fit:cover; border-radius:4px; background:#000; flex:none; }
+  .rcell .t { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* ---------- STUDIO: filmstrip + one reel at a time ---------- */
+  .studio-body { flex:1; min-height:0; display:flex; border-top:1px solid var(--line); }
+  .drop { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; margin:20px; flex:1; border:2px dashed var(--line-2); border-radius:20px; text-align:center; cursor:pointer; transition:.15s; background:var(--panel); padding:30px; }
   .drop:hover, .drop.over { border-color:var(--agni); background:var(--panel-2); }
-  .drop strong { display:block; font-size:18px; margin-bottom:4px; }
-  .drop .hint { color:var(--dim); font-size:14px; }
-  .drop.compact { padding:14px; }
-  .drop.compact strong { font-size:15px; margin:0; }
-  .drop.compact .hint { display:none; }
-
-  .reels { display:flex; flex-direction:column; gap:16px; }
-  .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); display:grid; grid-template-columns:220px 1fr; gap:20px; padding:16px; }
-  .card.has-error { border-color:rgba(239,122,106,.6); }
-  @media (max-width:720px) { .card { grid-template-columns:1fr; } .preview { max-width:240px; margin:0 auto; width:100%; } }
-  .preview video { width:100%; aspect-ratio:9/16; object-fit:cover; border-radius:10px; background:#000; display:block; }
+  .drop svg { width:56px; height:56px; color:var(--agni); }
+  .drop strong { font:400 30px/1.1 Anton, sans-serif; text-transform:lowercase; }
+  .drop .hint { color:var(--dim); font-size:14px; max-width:520px; }
+  .studio-work { flex:1; min-height:0; display:grid; grid-template-columns:120px 1fr; }
+  .studio-work.over { box-shadow:inset 0 0 0 3px var(--agni); }
+  .filmstrip { border-right:1px solid var(--line); background:var(--panel); overflow:auto; padding:12px 10px; display:flex; flex-direction:column; gap:10px; }
+  .frame { position:relative; width:100%; aspect-ratio:9/16; border-radius:10px; overflow:hidden; background:#000; border:0; padding:0; cursor:pointer; flex:none; transition:box-shadow .15s; }
+  .frame video { width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .frame[aria-current=true] { box-shadow:0 0 0 3px var(--agni); }
+  .frame .n { position:absolute; top:6px; left:6px; font:400 14px/1 Anton, sans-serif; background:rgba(9,22,37,.85); border-radius:6px; padding:3px 6px; }
+  .frame .st { position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700; background:rgba(9,22,37,.85); }
+  .frame .st.ok { color:var(--ok); } .frame .st.bad { color:var(--bad); } .frame .st.wait { color:var(--dim); }
+  .frame .when { position:absolute; left:0; right:0; bottom:0; font-size:11px; padding:14px 6px 5px; background:linear-gradient(transparent, rgba(0,0,0,.9)); text-align:center; }
+  .frame.add { display:grid; place-items:center; background:var(--night); border:2px dashed var(--line-2); color:var(--dim); font-size:12px; font-weight:600; }
+  .frame.add:hover { border-color:var(--agni); color:var(--agni); }
+  .editor { overflow:auto; min-height:0; padding:18px 20px 30px; }
+  .card { display:grid; grid-template-columns:minmax(220px, 34%) 1fr; gap:24px; max-width:1100px; }
+  .card.has-error .preview video { box-shadow:0 0 0 2px rgba(239,122,106,.7); }
+  .preview { position:sticky; top:0; align-self:start; }
+  .preview video { width:100%; max-height:calc(100dvh - 280px); aspect-ratio:9/16; object-fit:contain; border-radius:14px; background:#000; display:block; }
   .cover { margin-top:10px; }
   .cover input[type=range] { width:100%; accent-color:var(--agni); }
   .cover .lbl { display:flex; justify-content:space-between; font-size:13px; color:var(--dim); }
   .fields { display:flex; flex-direction:column; gap:16px; min-width:0; }
-  .cardhead { display:flex; align-items:flex-start; gap:10px; }
-  .cardhead .name { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
-  .chip { font-size:12px; padding:2px 8px; border-radius:99px; background:var(--panel-2); color:var(--dim); }
-  .chip.ok { color:var(--ok); }
-  .iconbtn { margin-left:auto; flex:none; background:none; border:1px solid var(--line); color:var(--dim); border-radius:8px; padding:6px 10px; cursor:pointer; font-size:13px; }
-  .iconbtn:hover { color:var(--bone); border-color:var(--line-2); }
+  .cardhead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .cardhead .name { font:400 22px/1.1 Anton, sans-serif; text-transform:lowercase; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1; }
+  .meta { display:flex; gap:6px; flex-wrap:wrap; }
   .field > label, .field > .label { display:block; font-weight:600; font-size:14px; margin-bottom:6px; }
-  .help { color:var(--dim); font-size:13px; margin-top:6px; }
-  .msg { font-size:13px; margin-top:6px; }
-  .msg.bad { color:var(--bad); } .msg.warn { color:var(--warn); }
-  textarea, input[type=text], input[type=datetime-local], input[type=number] { width:100%; background:var(--night); border:1px solid var(--line-2); border-radius:10px; padding:10px 12px; color-scheme:dark; }
-  textarea { min-height:96px; resize:vertical; }
-  textarea:focus, input:focus { border-color:var(--jal); outline:none; }
   .counters { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--mute); margin-top:6px; }
   .counters .over { color:var(--bad); font-weight:700; }
-
   .choices { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  @media (max-width:560px) { .choices { grid-template-columns:1fr; } }
   .choice { position:relative; display:block; border:1px solid var(--line-2); border-radius:10px; padding:10px 12px 10px 38px; cursor:pointer; background:var(--night); }
   .choice input { position:absolute; left:12px; top:13px; accent-color:var(--agni); width:16px; height:16px; margin:0; }
   .choice b { display:block; font-size:14px; }
@@ -88,39 +192,47 @@
   .when-row { display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap; }
   .when-row input { max-width:260px; }
   .rel { font-size:13px; color:var(--jal); }
-
   details.more { border-top:1px solid var(--line); padding-top:10px; }
   details.more summary { cursor:pointer; color:var(--dim); font-size:14px; font-weight:600; list-style:none; }
   details.more summary::-webkit-details-marker { display:none; }
-  details.more summary::before { content:"+ "; }
-  details.more[open] summary::before { content:"– "; }
+  details.more summary::before { content:"+ "; } details.more[open] summary::before { content:"– "; }
   details.more .inner { display:flex; flex-direction:column; gap:14px; margin-top:12px; }
-  .switch { display:flex; gap:10px; align-items:flex-start; cursor:pointer; }
-  .switch input { accent-color:var(--agni); width:18px; height:18px; margin-top:2px; flex:none; }
-
   .after { border:1px dashed var(--line-2); border-radius:10px; padding:10px 12px; font-size:13px; color:var(--dim); }
   .after b { color:var(--bone); }
-
-  .actionbar { position:fixed; left:0; right:0; bottom:0; z-index:30; background:rgba(15,31,49,.97); border-top:1px solid var(--line-2); backdrop-filter:blur(8px); }
-  .actionbar .bar { padding:12px 16px; }
+  .actionbar { border-top:1px solid var(--line-2); background:var(--panel); padding:10px 20px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .summary { font-size:14px; color:var(--dim); }
-  .summary b { color:var(--bone); }
-  .summary .issues { color:var(--bad); font-weight:600; }
-  .btn { border:0; border-radius:10px; padding:11px 18px; font-weight:700; font-size:15px; cursor:pointer; display:inline-block; }
-  .btn.primary { background:var(--agni); color:var(--agni-ink); }
-  .btn.primary:hover { filter:brightness(1.07); }
-  .btn.secondary { background:transparent; border:1px solid var(--line-2); color:var(--bone); font-weight:600; }
-  .btn.danger { background:transparent; border:1px solid rgba(239,122,106,.6); color:var(--bad); font-weight:600; }
-  .btn.small { padding:7px 12px; font-size:13px; border-radius:8px; }
-  .btn:disabled { opacity:.45; cursor:not-allowed; filter:none; }
+  .summary b { color:var(--bone); } .summary .issues { color:var(--bad); font-weight:600; }
   .actions { display:flex; gap:8px; margin-left:auto; flex-wrap:wrap; }
 
-  dialog { border:1px solid var(--line-2); border-radius:16px; background:var(--panel); color:var(--bone); padding:0; width:min(640px, calc(100vw - 32px)); max-height:calc(100vh - 48px); }
-  dialog::backdrop { background:rgba(3,8,14,.7); }
+  /* ---------- QUEUE: lanes ---------- */
+  .lanes { flex:1; min-height:0; display:grid; grid-template-columns:repeat(4, minmax(250px, 1fr)); gap:12px; padding:12px 20px 20px; overflow-x:auto; border-top:1px solid var(--line); }
+  .lane { display:flex; flex-direction:column; min-height:0; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); }
+  .lane-h { display:flex; align-items:center; gap:8px; padding:12px 14px 8px; font-weight:700; font-size:14px; }
+  .lane-h .n { margin-left:auto; color:var(--dim); font-weight:600; }
+  .lane-h .dot { width:9px; height:9px; }
+  .lane-b { overflow:auto; min-height:0; padding:4px 10px 12px; display:flex; flex-direction:column; gap:8px; }
+  .lane-empty { color:var(--mute); font-size:13px; text-align:center; padding:20px 8px; }
+  .job { display:grid; grid-template-columns:56px 1fr; gap:10px; padding:8px; background:var(--night); border:1px solid var(--line); border-radius:12px; }
+  .job.failed { border-color:rgba(239,122,106,.5); }
+  .job video { width:56px; aspect-ratio:9/16; object-fit:cover; border-radius:8px; background:#000; }
+  .job .t { font-weight:700; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .job .s { color:var(--dim); font-size:13px; }
+  .job .acts { grid-column:1 / -1; display:flex; gap:6px; flex-wrap:wrap; }
+  .stepper { display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+  .stepper span { font-size:11px; padding:2px 7px; border-radius:99px; background:var(--panel-2); color:var(--mute); }
+  .stepper span.done { color:var(--ok); } .stepper span.now { color:var(--agni-ink); background:var(--agni); }
+  .err { margin-top:6px; font-size:13px; color:var(--bad); }
+  .err details { color:var(--mute); font-size:12px; margin-top:4px; word-break:break-word; }
+  .reschedule { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .reschedule input { padding:6px 10px; }
+
+  /* ---------- dialogs ---------- */
+  dialog { border:1px solid var(--line-2); border-radius:16px; background:var(--panel); color:var(--bone); padding:0; width:min(640px, calc(100vw - 32px)); max-height:calc(100dvh - 48px); }
+  dialog::backdrop { background:rgba(3,8,14,.7); backdrop-filter:blur(2px); }
   .dlg-head { padding:18px 20px 0; }
   .dlg-head h3 { margin:0; font:400 24px Anton, sans-serif; text-transform:lowercase; }
   .dlg-head p { margin:6px 0 0; color:var(--dim); font-size:14px; }
-  .dlg-body { padding:16px 20px; overflow:auto; max-height:60vh; }
+  .dlg-body { padding:16px 20px; overflow:auto; max-height:60dvh; }
   .dlg-foot { padding:14px 20px 18px; display:flex; gap:8px; justify-content:flex-end; border-top:1px solid var(--line); flex-wrap:wrap; }
   .rv { display:grid; grid-template-columns:54px 1fr; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); align-items:center; }
   .rv video { width:54px; aspect-ratio:9/16; object-fit:cover; border-radius:6px; background:#000; }
@@ -129,179 +241,127 @@
   .progress { height:6px; background:var(--night); border-radius:99px; overflow:hidden; margin-top:6px; }
   .progress i { display:block; height:100%; width:0; background:var(--agni); transition:width .2s; }
   .help-list { margin:0; padding-left:18px; color:var(--dim); font-size:15px; }
-  .help-list li { margin-bottom:10px; }
-  .help-list b { color:var(--bone); }
-
-  .group { margin-bottom:28px; }
-  .group h3 { font-size:14px; text-transform:uppercase; letter-spacing:.8px; color:var(--dim); margin:0 0 10px; font-weight:700; }
-  .job { display:grid; grid-template-columns:64px 1fr auto; gap:14px; align-items:start; padding:14px; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); margin-bottom:10px; }
-  .job.failed { border-color:rgba(239,122,106,.5); }
-  .job video { width:64px; aspect-ratio:9/16; object-fit:cover; border-radius:8px; background:#000; }
-  .job .t { font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .job .s { color:var(--dim); font-size:14px; }
-  .job .acts { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
-  @media (max-width:640px) { .job { grid-template-columns:56px 1fr; } .job .acts { grid-column:1 / -1; justify-content:flex-start; } }
-  .stepper { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
-  .stepper span { font-size:12px; padding:3px 8px; border-radius:99px; background:var(--night); color:var(--mute); }
-  .stepper span.done { color:var(--ok); }
-  .stepper span.now { color:var(--agni-ink); background:var(--agni); }
-  .err { margin-top:8px; font-size:14px; color:var(--bad); }
-  .err details { color:var(--mute); font-size:12px; margin-top:4px; word-break:break-word; }
-  .todo { margin-top:10px; display:flex; flex-direction:column; gap:4px; font-size:14px; }
-  .todo label { display:flex; gap:8px; align-items:center; cursor:pointer; color:var(--dim); }
-  .todo input { accent-color:var(--ok); }
-  .todo input:checked + span { text-decoration:line-through; color:var(--mute); }
-  .empty { text-align:center; color:var(--dim); padding:40px 20px; border:1px dashed var(--line); border-radius:var(--r); }
-  .reschedule { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
-  .reschedule input { max-width:240px; padding:6px 10px; }
-  .spin { display:inline-block; width:12px; height:12px; border:2px solid var(--line-2); border-top-color:var(--agni); border-radius:50%; animation:spin .8s linear infinite; vertical-align:-1px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-
-  /* all reels */
-  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
-  .seg { display:inline-flex; border:1px solid var(--line-2); border-radius:10px; overflow:hidden; }
-  .seg button { background:none; border:0; padding:8px 12px; color:var(--dim); cursor:pointer; font-size:14px; font-weight:600; }
-  .seg button[aria-pressed=true] { background:var(--panel-2); color:var(--bone); }
-  .toolbar select { background:var(--night); border:1px solid var(--line-2); border-radius:10px; padding:8px 10px; color-scheme:dark; }
-  .toolbar .grow { flex:1; }
-  .bench { display:grid; grid-template-columns:repeat(auto-fit, minmax(118px, 1fr)); gap:8px; margin-bottom:8px; }
-  .bench div { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
-  .bench b { display:block; font-size:18px; font-variant-numeric:tabular-nums; }
-  .bench span { font-size:12px; color:var(--dim); }
-  .legend { font-size:13px; color:var(--dim); margin:0 0 14px; display:flex; gap:14px; flex-wrap:wrap; }
-  .up { color:var(--ok); } .down { color:var(--bad); }
-  .lowreach { opacity:.55; }
-  details.explain { font-size:14px; color:var(--dim); margin-bottom:14px; }
-  details.explain summary { cursor:pointer; color:var(--jal); }
-  .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--panel); }
-  table.reels { border-collapse:collapse; width:100%; min-width:980px; font-size:14px; }
-  table.reels th { position:sticky; top:0; background:var(--panel-2); text-align:right; font-weight:600; font-size:12px; color:var(--dim); padding:10px 10px; white-space:nowrap; cursor:pointer; user-select:none; border-bottom:1px solid var(--line-2); }
-  table.reels th:first-child, table.reels td:first-child { text-align:left; }
-  table.reels th[aria-sort] { color:var(--bone); }
-  table.reels th[aria-sort=descending]::after { content:" ↓"; } table.reels th[aria-sort=ascending]::after { content:" ↑"; }
-  table.reels td { padding:10px; border-bottom:1px solid var(--line); text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; vertical-align:middle; }
-  table.reels tr:last-child td { border-bottom:0; }
-  table.reels tbody tr { cursor:pointer; }
-  table.reels tbody tr:hover { background:rgba(255,255,255,.03); }
-  .rcell { display:flex; gap:10px; align-items:center; min-width:240px; max-width:320px; }
-  .rcell img, .rcell .noimg { width:36px; aspect-ratio:9/16; object-fit:cover; border-radius:4px; background:#000; flex:none; }
-  .rcell .t { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .rcell .d { font-size:12px; color:var(--mute); display:flex; gap:6px; align-items:center; }
-  .badge { font-size:11px; padding:1px 7px; border-radius:99px; border:1px solid var(--line-2); color:var(--dim); white-space:nowrap; }
-  .badge.trial { border-color:var(--agni); color:var(--agni); }
-  .badge.maybe { border-style:dashed; }
-  .todo-chip { font-size:12px; padding:2px 8px; border-radius:99px; background:var(--panel-2); color:var(--warn); }
-  .todo-chip.done { color:var(--ok); }
-  .cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
-  .rcard { background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:12px; cursor:pointer; display:flex; flex-direction:column; gap:10px; }
-  .rcard:hover { border-color:var(--line-2); }
-  .rcard .top { display:grid; grid-template-columns:64px 1fr; gap:10px; }
-  .rcard img, .rcard .noimg { width:64px; aspect-ratio:9/16; object-fit:cover; border-radius:6px; background:#000; }
-  .rcard .t { font-weight:700; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .mini { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
-  .mini div { background:var(--night); border-radius:8px; padding:5px 8px; }
-  .mini b { display:block; font-size:15px; font-variant-numeric:tabular-nums; }
-  .mini span { font-size:11px; color:var(--dim); }
-  /* reel detail */
-  #reelDlg { width:min(760px, calc(100vw - 32px)); }
-  .detail { display:grid; grid-template-columns:140px 1fr; gap:18px; }
-  @media (max-width:600px) { .detail { grid-template-columns:1fr; } .detail > img, .detail > .noimg { max-width:140px; } }
-  .detail > img, .detail > .noimg { width:140px; aspect-ratio:9/16; object-fit:cover; border-radius:10px; background:#000; }
-  .dgroup { font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--dim); margin:14px 0 6px; font-weight:700; }
-  .metrics { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; }
-  @media (max-width:520px) { .metrics { grid-template-columns:repeat(2, minmax(0,1fr)); } }
-  .metric { background:var(--night); border-radius:8px; padding:7px 10px; }
-  .metric b { display:block; font-size:17px; font-variant-numeric:tabular-nums; }
-  .metric span { font-size:12px; color:var(--dim); display:block; }
-  .metric small { font-size:11px; }
-  .metric b span, .mini b span { display:inline; font-size:inherit; }
-  .task { display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; padding:6px 0; cursor:pointer; font-size:14px; }
-  .task input { accent-color:var(--ok); width:16px; height:16px; margin-top:3px; }
-  .task small { display:block; color:var(--mute); font-size:12px; }
-  .task input:checked ~ span b { text-decoration:line-through; color:var(--mute); }
-  .toast { position:fixed; left:50%; bottom:96px; transform:translateX(-50%); background:var(--bone); color:var(--night); padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px; z-index:50; display:flex; gap:12px; align-items:center; box-shadow:0 8px 30px rgba(0,0,0,.4); max-width:calc(100vw - 32px); }
+  .help-list li { margin-bottom:10px; } .help-list b { color:var(--bone); }
+  .toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%); background:var(--bone); color:var(--night); padding:10px 16px; border-radius:10px; font-weight:600; font-size:14px; z-index:50; display:flex; gap:12px; align-items:center; box-shadow:0 8px 30px rgba(0,0,0,.4); max-width:calc(100vw - 32px); }
   .toast button { background:none; border:0; color:#0A6F6B; font-weight:700; cursor:pointer; text-decoration:underline; }
+
+  /* ---------- small screens: bottom nav, bottom-sheet inspector ---------- */
+  @media (max-width:860px) {
+    .app { grid-template-columns:1fr; grid-template-rows:1fr auto; }
+    .rail { grid-row:2; flex-direction:row; border-right:0; border-top:1px solid var(--line); padding:6px 8px calc(6px + env(safe-area-inset-bottom)); justify-content:space-around; }
+    .brand, .rail-foot .meter, .rail-foot .acct span:last-child { display:none; }
+    .rail-foot { margin:0; flex-direction:row; }
+    .nav { flex:1; padding:6px 4px; }
+    .lib-body { grid-template-columns:1fr; }
+    .inspector { position:fixed; left:0; right:0; bottom:0; max-height:82dvh; z-index:40; border-left:0; border-top:1px solid var(--line-2); border-radius:18px 18px 0 0; box-shadow:0 -20px 40px rgba(0,0,0,.5); transform:translateY(100%); transition:transform .25s; }
+    .inspector.open { transform:none; }
+    .insp-close { display:inline-block; }
+    .wall { grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:8px; }
+    .tile .more { display:none; }
+    .studio-work { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+    .filmstrip { flex-direction:row; border-right:0; border-bottom:1px solid var(--line); padding:8px; }
+    .frame { width:64px; }
+    .card { grid-template-columns:1fr; }
+    .preview { position:static; max-width:240px; margin:0 auto; width:100%; }
+    .choices { grid-template-columns:1fr; }
+    .lanes { grid-template-columns:repeat(4, 86%); scroll-snap-type:x mandatory; }
+    .lane { scroll-snap-align:start; }
+    .viewhead, .benchline, .lib-main, .editor, .actionbar, #banners { padding-left:14px; padding-right:14px; }
+  }
 </style>
 </head>
 <body>
-
-<header>
-  <div class="bar">
-    <h1>trial reel poster</h1>
-    <div class="status">
-      <span class="pill" id="acctPill" title="The Instagram account reels will post to"><span class="dot"></span><span>Checking account…</span></span>
-      <span class="pill" id="quotaPill" hidden title="Instagram allows 100 posts through apps in any 24 hours"></span>
-      <button class="linkbtn" id="helpBtn">How this works</button>
-      <button class="linkbtn" id="signOutBtn" hidden>Sign out</button>
+<div class="app">
+  <nav class="rail" aria-label="Main">
+    <div class="brand">trp</div>
+    <button class="nav" data-view="library" aria-current="page" title="Library (1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7.5" height="11" rx="2"/><rect x="13.5" y="3" width="7.5" height="7" rx="2"/><rect x="3" y="17" width="7.5" height="4" rx="1.5"/><rect x="13.5" y="13" width="7.5" height="8" rx="2"/></svg>
+      Library</button>
+    <button class="nav" data-view="studio" title="New reels (2)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="3"/><path d="M12 8.5v7M8.5 12h7"/></svg>
+      New<span class="count" id="draftCount" hidden></span></button>
+    <button class="nav" data-view="queue" title="Queue (3)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="11" rx="1.5"/><rect x="17" y="4" width="4" height="7" rx="1.5"/></svg>
+      Queue<span class="count" id="queueCount" hidden></span></button>
+    <div class="rail-foot">
+      <div class="acct" id="acctPill" title="The Instagram account reels post to"><span class="dot"></span><span>checking…</span></div>
+      <div class="meter" id="quotaPill" hidden title="Instagram allows 100 app posts in any 24 hours"></div>
+      <button class="railbtn" id="helpBtn" title="How this works (?)">Help</button>
+      <button class="railbtn" id="signOutBtn" hidden>Sign out</button>
     </div>
-  </div>
-</header>
+  </nav>
 
-<main>
-  <div id="banners"></div>
+  <main class="stage">
+    <div id="banners"></div>
 
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tabNew" aria-selected="true" aria-controls="viewNew">New reels<span class="count" id="draftCount" hidden></span></button>
-    <button class="tab" role="tab" id="tabQueue" aria-selected="false" aria-controls="viewQueue">Queue<span class="count" id="queueCount" hidden></span></button>
-    <button class="tab" role="tab" id="tabReels" aria-selected="false" aria-controls="viewReels">All reels &amp; insights</button>
-  </div>
-
-  <section id="viewNew" role="tabpanel" aria-labelledby="tabNew">
-    <div class="step"><span class="n">1</span><div><h2>Add reels</h2><p>Each one posts to @aware._wolf_ as a separate Trial Reel.</p></div></div>
-    <label class="drop" id="drop" tabindex="0">
-      <strong id="dropTitle">Drop your reels here, or click to choose</strong>
-      <span class="hint">MP4 or MOV · vertical 9:16 · 3 seconds to 15 minutes · up to 300 MB each · 1 to 4 reels works best</span>
-      <input type="file" id="pick" accept="video/mp4,video/quicktime,video/*" multiple hidden>
-    </label>
-
-    <div id="setup" hidden>
-      <div class="step"><span class="n">2</span><div><h2>Set up each reel</h2><p>Caption, cover, what happens after the trial, and when it posts.</p></div></div>
-      <div class="reels" id="reels"></div>
-      <div class="step"><span class="n">3</span><div><h2>Review and queue</h2><p>Use the bar at the bottom. Nothing is sent to Instagram until you confirm.</p></div></div>
-    </div>
-  </section>
-
-  <section id="viewReels" role="tabpanel" aria-labelledby="tabReels" hidden>
-    <div class="toolbar">
-      <div class="seg" role="group" aria-label="Which reels">
-        <button data-f="all" aria-pressed="true">All reels</button>
-        <button data-f="trial" aria-pressed="false">Trial reels</button>
-        <button data-f="grid" aria-pressed="false">On profile grid</button>
+    <!-- ============ LIBRARY ============ -->
+    <section class="view" id="viewLibrary" aria-label="Library">
+      <div class="viewhead">
+        <h2>library</h2>
+        <div class="chips" role="group" aria-label="Which reels">
+          <button data-f="all" aria-pressed="true">All</button>
+          <button data-f="trial" aria-pressed="false">Trials</button>
+          <button data-f="grid" aria-pressed="false">On grid</button>
+        </div>
+        <div class="chips" role="group" aria-label="Number shown on each reel" id="lensChips"></div>
+        <select class="pill" id="reelSort" aria-label="Sort reels"></select>
+        <div class="chips" role="group" aria-label="Layout">
+          <button data-v="wall" aria-pressed="true" title="Thumbnail wall">Wall</button>
+          <button data-v="table" aria-pressed="false" title="Table with every number">Table</button>
+        </div>
+        <span class="grow"></span>
+        <span class="sub" id="reelsUpdated"></span>
+        <button class="iconbtn" id="reelsRefresh" title="Fetch fresh numbers from Instagram">↻ Refresh</button>
       </div>
-      <div class="seg" role="group" aria-label="Layout">
-        <button data-v="table" aria-pressed="true">Table</button>
-        <button data-v="cards" aria-pressed="false">Cards</button>
+      <div class="benchline" id="bench"></div>
+      <div class="lib-body">
+        <div class="lib-main" id="libScroll">
+          <div id="reels-list"></div>
+          <div id="reelsSentinel" style="height:1px"></div>
+          <div style="text-align:center;margin-top:14px"><button class="btn secondary" id="reelsMore" hidden>Load older reels</button></div>
+        </div>
+        <aside class="inspector" id="inspector" aria-label="Reel details"></aside>
       </div>
-      <label class="help" style="margin:0">Sort <select id="reelSort" aria-label="Sort reels"></select></label>
-      <span class="grow"></span>
-      <span class="help" id="reelsUpdated" style="margin:0"></span>
-      <button class="btn small secondary" id="reelsRefresh">Refresh numbers</button>
-    </div>
-    <div class="bench" id="bench"></div>
-    <div class="legend" id="legend"></div>
-    <details class="explain"><summary>What these numbers mean</summary>
-      <p><b>Rates are per account reached.</b> Like % = likes ÷ accounts reached. Same for Comment %, Share % and Save %. Engagement % = (likes + comments + shares + saves) ÷ accounts reached. <b>Views per person</b> above 1.0 means people watched it more than once.</p>
-      <p><b>Compared with this account.</b> Each rate is compared with the median of the reels loaded here. <span class="up">▲</span> means at least 25% better than usual, <span class="down">▼</span> means at least 25% worse. Reels that reached fewer than 100 accounts are faded and left out of the medians, because a few people can swing the rates a lot.</p>
-      <p><b>Trial labels.</b> Instagram doesn't tell apps which reels are trials. <b>Trial</b> means it was posted from this app as a trial. <b>Probably trial</b> means it isn't on the profile grid, which is true of trial reels but also of reels kept off the grid on purpose.</p>
-    </details>
-    <div id="reels-list"></div>
-    <div style="text-align:center;margin-top:12px"><button class="btn secondary" id="reelsMore" hidden>Load older reels</button></div>
-  </section>
+    </section>
 
-  <section id="viewQueue" role="tabpanel" aria-labelledby="tabQueue" hidden>
-    <div id="queue"></div>
-    <p class="help" style="margin-top:24px">Scheduled reels post on time from the cloud, even when every laptop is closed. Times are checked every minute.</p>
-  </section>
-</main>
+    <!-- ============ STUDIO ============ -->
+    <section class="view" id="viewStudio" aria-label="New reels" hidden>
+      <div class="viewhead">
+        <h2>new reels</h2>
+        <span class="sub">Each reel posts to @aware._wolf_ as its own Trial Reel. Nothing is sent until you confirm.</span>
+      </div>
+      <div class="studio-body" id="studioBody">
+        <label class="drop" id="drop" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M12 15V8m-3 3 3-3 3 3"/></svg>
+          <strong>drop your reels here</strong>
+          <span class="hint">or click to choose. MP4 or MOV · vertical 9:16 · 3 seconds to 15 minutes · up to 300 MB each · 1 to 4 reels works best</span>
+          <input type="file" id="pick" accept="video/mp4,video/quicktime,video/*" multiple hidden>
+        </label>
+        <div class="studio-work" id="setup" hidden>
+          <div class="filmstrip" id="filmstrip" aria-label="Your reels"></div>
+          <div class="editor" id="reels"></div>
+        </div>
+      </div>
+      <div class="actionbar" id="actionbar" hidden>
+        <div class="summary" id="summary"></div>
+        <div class="actions">
+          <button class="btn secondary" id="spreadBtn" title="Give every reel a time, spaced apart">Schedule all…</button>
+          <button class="btn primary" id="reviewBtn">Review &amp; queue</button>
+        </div>
+      </div>
+    </section>
 
-<div class="actionbar" id="actionbar" hidden>
-  <div class="bar">
-    <div class="summary" id="summary"></div>
-    <div class="actions">
-      <button class="btn secondary" id="spreadBtn" title="Give every reel a time, spaced apart">Schedule all…</button>
-      <button class="btn primary" id="reviewBtn">Review &amp; queue</button>
-    </div>
-  </div>
+    <!-- ============ QUEUE ============ -->
+    <section class="view" id="viewQueue" aria-label="Queue" hidden>
+      <div class="viewhead">
+        <h2>queue</h2>
+        <span class="sub">Posts on time from the cloud, even with every laptop closed.</span>
+        <span class="grow"></span>
+        <button class="iconbtn" id="showCancelled" aria-pressed="false">Show cancelled</button>
+      </div>
+      <div class="lanes" id="queue"></div>
+    </section>
+  </main>
 </div>
 
 <dialog id="spreadDlg">
@@ -311,7 +371,7 @@
       <div class="field"><label for="spreadStart">First reel posts at</label><input type="datetime-local" id="spreadStart"><div class="help" id="spreadTz"></div></div>
       <div class="field" style="margin-top:14px"><label for="spreadGap">Then one reel every</label>
         <div class="when-row" style="margin:0"><input type="number" id="spreadGap" min="0" step="5" value="60" style="max-width:110px"><span>minutes</span></div>
-        <div class="help">Use 0 to post them all at the same time. Reels post in the order shown on the page.</div>
+        <div class="help">Use 0 to post them all at the same time. Reels post in filmstrip order.</div>
       </div>
       <div class="msg bad" id="spreadErr"></div>
     </div>
@@ -331,18 +391,12 @@
   </div>
 </dialog>
 
-<dialog id="reelDlg">
-  <div class="dlg-head" style="display:flex;gap:10px;align-items:flex-start"><div style="flex:1;min-width:0"><h3 id="reelDlgTitle">reel</h3><p id="reelDlgSub"></p></div>
-    <button class="iconbtn" onclick="this.closest('dialog').close()" aria-label="Close">Close</button></div>
-  <div class="dlg-body" id="reelDlgBody" style="max-height:72vh"></div>
-</dialog>
-
 <dialog id="loginDlg">
   <form id="loginForm">
     <div class="dlg-head"><h3>sign in</h3><p>Enter the team password Ritwik gave you. You stay signed in on this browser for 30 days.</p></div>
     <div class="dlg-body">
       <div class="field"><label for="pw">Team password</label>
-        <input type="password" id="pw" autocomplete="current-password" required style="width:100%;background:var(--night);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px">
+        <input type="password" id="pw" autocomplete="current-password" required>
         <div class="msg bad" id="loginErr" role="alert"></div></div>
     </div>
     <div class="dlg-foot"><button class="btn primary" id="loginBtn" type="submit">Sign in</button></div>
@@ -353,17 +407,14 @@
   <div class="dlg-head"><h3>how this works</h3><p>A two-minute read before your first batch.</p></div>
   <div class="dlg-body">
     <ol class="help-list">
-      <li><b>What a Trial Reel is.</b> Instagram shows it only to people who do not follow @aware._wolf_. Followers do not see it unless it gets shared to them later. Use it to test hooks without spamming followers.</li>
-      <li><b>Add reels.</b> Drop 1 to 4 videos. The app checks each one (length, size, shape) before anything is sent.</li>
-      <li><b>Set up each reel.</b> Write the caption, drag the slider to choose the cover frame, and choose what happens after the trial:
-        <br>· <b>I'll decide later</b>: the reel stays with non-followers until someone shares it to followers from the Instagram app.
-        <br>· <b>Share automatically if it does well</b>: Instagram shares it to followers by itself if it performs well with non-followers.</li>
-      <li><b>Pick when.</b> "Post now" goes out about a minute after queuing. "Schedule" posts at that time. All times are in your computer's time zone.</li>
-      <li><b>Review &amp; queue.</b> Nothing reaches Instagram until you press the final button in the review window.</li>
-      <li><b>Watch the Queue tab.</b> Posting takes 1 to 3 minutes per reel. When a reel is live you get a "View on Instagram" link.</li>
-      <li><b>All reels &amp; insights.</b> Every reel on the account with views, reach, average watch time, shares and saves. Sort by what matters, switch comments on or off, and open any reel in Instagram.</li>
-      <li><b>Three things only the Instagram app can do:</b> <b>Hide like count</b>, <b>Translations</b> and <b>Share to followers</b> for trial reels. Instagram doesn't let apps do them. Each reel has a checklist with the exact taps; tick items when done and the whole team sees it.</li>
-      <li><b>If something fails</b>, the Queue tab says why in plain words and has a "Try again" button. Daily limit: 100 posts in any 24 hours.</li>
+      <li><b>Three spaces, on the left rail.</b> <b>Library</b> is every reel on @aware._wolf_ with its numbers. <b>New</b> is where you set up and queue reels. <b>Queue</b> shows what's scheduled, posting, live, or needs attention.</li>
+      <li><b>What a Trial Reel is.</b> Instagram shows it only to people who don't follow @aware._wolf_. Followers don't see it unless it's shared to them later.</li>
+      <li><b>New reels.</b> Drop 1 to 4 videos. They line up in the filmstrip on the left. Click one to edit its caption, cover frame (drag the slider), what happens after the trial, and when it posts. A red ✕ on a reel means something needs fixing.</li>
+      <li><b>After the trial:</b> <b>I'll decide later</b> keeps it with non-followers until someone shares it from the Instagram app. <b>Share automatically if it does well</b> lets Instagram share it to followers by itself.</li>
+      <li><b>Review &amp; queue.</b> Nothing reaches Instagram until you press the final button in the review window. Posting takes 1 to 3 minutes per reel.</li>
+      <li><b>Library.</b> Each tile shows one number; pick which with the lens (Views, Share %, Avg watch…). ▲ means 25%+ better than this account usually does, ▼ means 25%+ worse. Click a tile for everything about it. Use <kbd>←</kbd> <kbd>→</kbd> to move between reels.</li>
+      <li><b>Three things only the Instagram app can do:</b> <b>Hide like count</b>, <b>Translations</b> and <b>Share to followers</b>. Each reel's panel has the exact taps; tick them when done and the whole team sees it. The small circle on a tile counts what's left.</li>
+      <li><b>Shortcuts:</b> <kbd>1</kbd> Library · <kbd>2</kbd> New · <kbd>3</kbd> Queue · <kbd>?</kbd> this help · <kbd>Esc</kbd> close.</li>
     </ol>
   </div>
   <div class="dlg-foot"><button class="btn primary" onclick="this.closest('dialog').close()">Got it</button></div>
@@ -375,13 +426,14 @@
 /* ===================== state & helpers ===================== */
 const LIMITS = { caption: 2200, tags: 30, mentions: 20, minSec: 3, maxSec: 900, maxMB: 300, collabs: 3 };
 const drafts = [];
-let jobs = [], account = null, currentTab = 'new';
+let jobs = [], account = null, currentTab = 'library', activeKey = null, showCancelled = false;
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const tzShort = new Date().toLocaleTimeString([], { timeZoneName:'short' }).split(' ').pop();
 const fmtDur = s => { s = Math.round(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 const fmtWhen = d => d.toLocaleString([], { weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit' });
+const fmtShort = d => d.toLocaleString([], { weekday:'short', hour:'numeric', minute:'2-digit' });
 const toLocalInput = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 function fmtRel(m) { const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = m % 60;
   return [d && `${d}d`, h && `${h}h`, (!d && mm) && `${mm}m`].filter(Boolean).join(' ') || '0m'; }
@@ -397,22 +449,31 @@ function toast(text, undo) {
 const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
                 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
 
-/* ===================== tabs ===================== */
+/* ===================== navigation ===================== */
+const VIEWS = { library: 'viewLibrary', studio: 'viewStudio', queue: 'viewQueue' };
 function showTab(t) {
+  t = { new: 'studio', reels: 'library' }[t] || t;
   currentTab = t;
-  $('tabNew').setAttribute('aria-selected', t === 'new'); $('tabQueue').setAttribute('aria-selected', t === 'queue'); $('tabReels').setAttribute('aria-selected', t === 'reels');
-  $('viewNew').hidden = t !== 'new'; $('viewQueue').hidden = t !== 'queue'; $('viewReels').hidden = t !== 'reels';
-  if (t === 'reels' && !reels.loaded) loadReels();
+  document.querySelectorAll('.nav[data-view]').forEach(b => b.dataset.view === t ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  Object.entries(VIEWS).forEach(([k, id]) => $(id).hidden = k !== t);
+  if (t === 'library' && !reels.loaded) loadReels();
+  store.set('view', t);
   renderBar();
 }
-$('tabNew').onclick = () => showTab('new');
-$('tabQueue').onclick = () => showTab('queue');
-$('tabReels').onclick = () => showTab('reels');
+document.querySelectorAll('.nav[data-view]').forEach(b => b.onclick = () => showTab(b.dataset.view));
 $('helpBtn').onclick = () => $('helpDlg').showModal();
+document.addEventListener('keydown', e => {
+  if (e.target.closest?.('input, textarea, select') || e.metaKey || e.ctrlKey || e.altKey || document.querySelector('dialog[open]')) return;
+  if (e.key === '1') showTab('library'); else if (e.key === '2') showTab('studio'); else if (e.key === '3') showTab('queue');
+  else if (e.key === '?') $('helpDlg').showModal();
+  else if (currentTab === 'library' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { e.preventDefault(); stepReel(e.key === 'ArrowRight' ? 1 : -1); }
+  else if (currentTab === 'studio' && drafts.length && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); stepDraft(e.key === 'ArrowDown' ? 1 : -1); }
+  else if (e.key === 'Escape' && reels.open) closeInspector();
+});
 
 /* ===================== engine connection ===================== */
 // The page can be opened from a local engine (same origin) or from GitHub Pages. On Pages it looks up the
-// engine's current address in config.json, which the engine rewrites every time its tunnel restarts.
+// engine's address in config.json.
 const LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
 const CONFIG_URL = 'https://api.github.com/repos/ritwik-1994/trial-reel-poster/contents/config.json';
 const API_OVERRIDE = new URLSearchParams(location.search).get('api');   // for testing against another engine
@@ -463,45 +524,47 @@ async function loadAccount() {
   catch (e) { if (e.message === 'login') return; account = { error: 'offline' }; }
   const pill = $('acctPill');
   $('signOutBtn').hidden = LOCAL || !session;
-  if (account.error === 'offline') pill.innerHTML = `<span class="dot bad"></span><span>${LOCAL ? 'App is not running' : "Can't reach the posting service"}</span>`;
-  else if (account.error) pill.innerHTML = '<span class="dot bad"></span><span>Instagram not connected</span>';
+  if (account.error === 'offline') pill.innerHTML = `<span class="dot bad"></span><span>offline</span>`;
+  else if (account.error) pill.innerHTML = '<span class="dot bad"></span><span>IG not connected</span>';
   else {
-    pill.innerHTML = `<span class="dot ok"></span><span>Posting to <b style="color:var(--bone)">@${esc(account.username)}</b></span>`;
-    const q = $('quotaPill'); q.hidden = false;
-    q.textContent = `${account.quota_used} of ${account.quota_total} posts used today`;
+    pill.innerHTML = `<span class="dot ok"></span><span>@${esc(account.username)}</span>`;
+    const q = $('quotaPill'), used = account.quota_used, tot = account.quota_total || 100, c = 2 * Math.PI * 22;
+    q.hidden = false; q.title = `${used} of ${tot} app posts used in the last 24 hours`;
+    q.innerHTML = `<svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="22" fill="none" stroke="var(--line-2)" stroke-width="4"/>
+      <circle cx="26" cy="26" r="22" fill="none" stroke="var(--agni)" stroke-width="4" stroke-linecap="round" stroke-dasharray="${c * Math.min(1, used / tot)} ${c}"/></svg><b>${used}/${tot}</b>`;
   }
   renderBanners(); renderBar();
 }
 function renderBanners() {
   const b = [];
   if (account?.error === 'offline')
-    b.push(['bad', LOCAL ? 'The app has stopped.' : "Can't reach the posting service.", "Check your internet connection. Scheduled reels are safe and still post on time. Your reels on this page are kept until you close the tab. If this lasts more than 5 minutes, message Ritwik."]);
+    b.push(['bad', LOCAL ? 'The app has stopped.' : "Can't reach the posting service.", "Check your internet connection. Scheduled reels are safe and still post on time. Your reels in New are kept until you close the tab. If this lasts more than 5 minutes, message Ritwik."]);
   else if (account?.error)
     b.push(['bad', "Instagram isn't connected.", "Reels can't post until Ritwik reconnects the account. You can still set up reels, but you can't queue them yet."]);
-  if (account && !account.error && account.media_link === false)
-    b.push(['warn', 'Getting ready to post…', 'The secure video link is starting. This usually takes under 30 seconds. Reels queued now will wait for it.']);
   if (account && !account.error && account.quota_used >= account.quota_total)
     b.push(['bad', 'Daily limit reached.', 'Instagram allows 100 app posts in any 24 hours. Schedule reels for later instead.']);
-  $('banners').innerHTML = b.map(([k, t, d]) => `<div class="banner ${k}" role="status"><span class="dot ${k}" style="margin-top:7px"></span><div><b>${t}</b>${d}</div></div>`).join('');
+  $('banners').innerHTML = b.map(([k, t, d]) => `<div class="banner ${k}" role="status"><span class="dot ${k}" style="margin-top:6px"></span><div><b>${t}</b>${d}</div></div>`).join('');
 }
 
 /* ===================== adding videos ===================== */
 const drop = $('drop');
 $('pick').onchange = e => { addFiles(e.target.files); e.target.value = ''; };
 drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('pick').click(); } };
-drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
-drop.ondragleave = () => drop.classList.remove('over');
-drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); addFiles(e.dataTransfer.files); };
+// drag & drop anywhere in the studio
+$('studioBody').addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); $('setup').classList.add('over'); });
+$('studioBody').addEventListener('dragleave', e => { if (!$('studioBody').contains(e.relatedTarget)) { drop.classList.remove('over'); $('setup').classList.remove('over'); } });
+$('studioBody').addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); $('setup').classList.remove('over'); addFiles(e.dataTransfer.files); });
 
 function addFiles(files) {
-  let skipped = 0;
+  let skipped = 0, first = null;
   for (const f of files) {
     if (!f.type.startsWith('video/')) { skipped++; continue; }
     const d = { key: crypto.randomUUID(), f, url: URL.createObjectURL(f), caption: '', graduation: 'MANUAL',
                 when: 'now', at: '', cover: 0, collaborators: [], comments_off: false, meta: null, checks: [] };
-    drafts.push(d); probe(d);
+    drafts.push(d); probe(d); first = first || d;
   }
   if (skipped) toast(`Skipped ${skipped} file${skipped > 1 ? 's' : ''} that ${skipped > 1 ? "aren't videos" : "isn't a video"}`);
+  if (first) activeKey = first.key;
   renderDrafts();
 }
 function probe(d) {   // read length and shape in the browser, then check against Instagram's rules
@@ -538,20 +601,48 @@ function issues(d) {
   return out;
 }
 
-/* ===================== reel cards ===================== */
+/* ===================== studio: filmstrip + one editor at a time ===================== */
+function stepDraft(dir) {
+  const i = drafts.findIndex(d => d.key === activeKey);
+  const n = drafts[(i + dir + drafts.length) % drafts.length]; if (n) { activeKey = n.key; renderDrafts(); }
+}
 function renderDrafts() {
-  $('setup').hidden = !drafts.length;
-  drop.classList.toggle('compact', drafts.length > 0);
-  $('dropTitle').textContent = drafts.length ? '+ Add more reels' : 'Drop your reels here, or click to choose';
+  if (drafts.length && !drafts.find(d => d.key === activeKey)) activeKey = drafts[0].key;
+  $('setup').hidden = !drafts.length; drop.hidden = drafts.length > 0;
   const box = $('reels');
   [...box.children].forEach(el => { if (!drafts.find(d => d.key === el.dataset.key)) el.remove(); });
   drafts.forEach((d, i) => {
     let el = box.querySelector(`[data-key="${d.key}"]`);
-    if (!el) el = buildCard(d);
-    if (box.children[i] !== el) box.insertBefore(el, box.children[i] || null);
+    if (!el) { el = buildCard(d); box.appendChild(el); }
+    el.hidden = d.key !== activeKey;
+    if (el.hidden) el.querySelector('video').pause();
     refreshCard(d, el, i);
   });
+  renderFilmstrip();
   renderBar();
+}
+function renderFilmstrip() {
+  const fs = $('filmstrip');
+  [...fs.querySelectorAll('.frame[data-key]')].forEach(el => { if (!drafts.find(d => d.key === el.dataset.key)) el.remove(); });
+  let add = fs.querySelector('.frame.add');
+  if (!add) { add = document.createElement('button'); add.className = 'frame add'; add.innerHTML = '+ Add'; add.title = 'Add more reels'; add.onclick = () => $('pick').click(); fs.appendChild(add); }
+  drafts.forEach((d, i) => {
+    let el = fs.querySelector(`.frame[data-key="${d.key}"]`);
+    if (!el) {
+      el = document.createElement('button'); el.className = 'frame'; el.dataset.key = d.key;
+      el.innerHTML = `<video src="${d.url}#t=${d.cover}" muted preload="metadata"></video><span class="n"></span><span class="st"></span><span class="when"></span>`;
+      el.onclick = () => { activeKey = d.key; renderDrafts(); };
+    }
+    if (fs.children[i] !== el) fs.insertBefore(el, fs.children[i]);
+    const bad = issues(d).length, st = el.querySelector('.st');
+    el.querySelector('.n').textContent = i + 1;
+    st.className = 'st ' + (!d.meta ? 'wait' : bad ? 'bad' : 'ok'); st.textContent = !d.meta ? '…' : bad ? '✕' : '✓';
+    el.querySelector('.when').textContent = d.when === 'now' ? 'Post now' : d.at ? fmtShort(new Date(d.at)) : 'No time set';
+    el.setAttribute('aria-current', d.key === activeKey);
+    el.setAttribute('aria-label', `Reel ${i + 1}: ${d.f.name}${bad ? ', needs fixing' : ''}`);
+    const v = el.querySelector('video'); if (d.meta?.dur && Math.abs(v.currentTime - d.cover) > 0.2) v.currentTime = d.cover;
+  });
+  fs.appendChild(add);
 }
 
 function buildCard(d) {
@@ -568,9 +659,12 @@ function buildCard(d) {
     </div>
     <div class="fields">
       <div class="cardhead">
-        <div style="min-width:0"><div class="name" data-r="title"></div><div class="meta" data-r="meta"></div></div>
+        <div class="name" data-r="title"></div>
+        <button class="iconbtn" data-act="prev" title="Previous reel (↑)">↑</button>
+        <button class="iconbtn" data-act="next" title="Next reel (↓)">↓</button>
         <button class="iconbtn" data-act="remove">Remove</button>
       </div>
+      <div class="meta" data-r="meta"></div>
       <div data-r="checks"></div>
       <div class="field">
         <label for="${id('cap')}">Caption</label>
@@ -611,7 +705,7 @@ function buildCard(d) {
             <span><b style="font-size:14px">Turn off comments</b><br><span class="help">Comments are switched off right after the reel goes live.</span></span></label>
         </div>
       </details>
-      <div class="after"><b>After it's live:</b> set <b>Hide like count</b> and <b>Translations</b> in the Instagram app (⋯ on the reel). Instagram doesn't let apps change these. The "All reels &amp; insights" tab gives you a shared checklist.</div>
+      <div class="after"><b>After it's live:</b> set <b>Hide like count</b> and <b>Translations</b> in the Instagram app (⋯ on the reel). Instagram doesn't let apps change these. Each reel's panel in the Library has a shared checklist.</div>
     </div>`;
   el.querySelector('[data-act=remove]').setAttribute('aria-label', `Remove ${d.f.name}`);
   const video = el.querySelector('video');
@@ -624,24 +718,29 @@ function buildCard(d) {
       else if (inp.type === 'radio') { if (inp.checked) d[k] = inp.value; }
       else d[k] = inp.value;
       if (k === 'when' && d.when === 'later' && !d.at) { const t = new Date(Date.now() + 3600000); t.setMinutes(0, 0, 0); d.at = toLocalInput(t); }
-      refreshCard(d, el, drafts.indexOf(d)); renderBar();
+      refreshCard(d, el, drafts.indexOf(d)); renderFilmstrip(); renderBar();
     });
   });
+  el.querySelector('[data-act=prev]').onclick = () => stepDraft(-1);
+  el.querySelector('[data-act=next]').onclick = () => stepDraft(1);
   el.querySelector('[data-act=remove]').onclick = () => {
-    const i = drafts.indexOf(d); drafts.splice(i, 1); renderDrafts();
-    toast(`Removed ${d.f.name}`, () => { drafts.splice(i, 0, d); renderDrafts(); });
+    const i = drafts.indexOf(d); drafts.splice(i, 1);
+    activeKey = drafts[Math.min(i, drafts.length - 1)]?.key || null; renderDrafts();
+    toast(`Removed ${d.f.name}`, () => { drafts.splice(i, 0, d); activeKey = d.key; renderDrafts(); });
   };
   return el;
 }
 
 function refreshCard(d, el, i) {
   const q = s => el.querySelector(`[data-r=${s}]`);
-  q('title').textContent = `Reel ${i + 1} · ${d.f.name}`;
+  q('title').textContent = `reel ${i + 1} of ${drafts.length}`;
+  q('title').title = d.f.name;
+  el.querySelector('[data-act=prev]').hidden = el.querySelector('[data-act=next]').hidden = drafts.length < 2;
   const mb = (d.f.size / 1048576).toFixed(1);
-  q('meta').innerHTML = d.meta && !d.meta.error
+  q('meta').innerHTML = `<span class="chip" title="File name">${esc(d.f.name)}</span>` + (d.meta && !d.meta.error
     ? `<span class="chip">${fmtDur(d.meta.dur)}</span><span class="chip">${d.meta.w}×${d.meta.h}</span><span class="chip">${mb} MB</span>` +
       (d.checks.length ? '' : '<span class="chip ok">✓ Ready for Instagram</span>')
-    : d.meta ? '' : '<span class="chip">Checking video…</span>';
+    : d.meta ? '' : '<span class="chip">Checking video…</span>');
   q('checks').innerHTML = d.checks.map(([k, t]) => `<div class="msg ${k}">${k === 'bad' ? '✕' : '!'} ${esc(t)}</div>`).join('');
   const r = el.querySelector('[data-k=cover]');
   if (d.meta?.dur) { r.max = Math.max(0.1, d.meta.dur - 0.1).toFixed(1); if (Math.abs(+r.value - d.cover) > 0.05) { r.value = d.cover; el.querySelector('video').currentTime = d.cover; } }
@@ -666,16 +765,16 @@ function refreshCard(d, el, i) {
 function renderBar() {
   const n = drafts.length;
   $('draftCount').hidden = !n; $('draftCount').textContent = n;
-  $('actionbar').hidden = !n || currentTab !== 'new';
+  $('actionbar').hidden = !n;
   if (!n) return;
   const now = drafts.filter(d => d.when === 'now').length, later = n - now;
-  const bad = drafts.reduce((a, d) => a + issues(d).length, 0), pending = drafts.some(d => !d.meta);
+  const badReels = drafts.filter(d => issues(d).length).length, pending = drafts.some(d => !d.meta);
   const parts = [`<b>${n} reel${n > 1 ? 's' : ''}</b>`];
   if (now) parts.push(`${now} posting now`);
   if (later) parts.push(`${later} scheduled`);
-  $('summary').innerHTML = parts.join(' · ') + (bad ? ` · <span class="issues">${bad} thing${bad > 1 ? 's' : ''} to fix (marked in red)</span>` : '');
-  $('reviewBtn').disabled = bad > 0 || pending || !!account?.error;
-  $('reviewBtn').title = pending ? 'Still checking videos…' : bad ? 'Fix the items marked in red first' : account?.error ? "Instagram isn't connected" : '';
+  $('summary').innerHTML = parts.join(' · ') + (badReels ? ` · <span class="issues">${badReels} reel${badReels > 1 ? 's' : ''} marked ✕ need fixing</span>` : '');
+  $('reviewBtn').disabled = badReels > 0 || pending || !!account?.error;
+  $('reviewBtn').title = pending ? 'Still checking videos…' : badReels ? 'Fix the reels marked ✕ in the filmstrip first' : account?.error ? "Instagram isn't connected" : '';
 }
 
 /* ===================== schedule all ===================== */
@@ -764,8 +863,8 @@ $('reviewGo').onclick = async () => {
   toast(`${n} reel${n > 1 ? 's' : ''} queued`);
 };
 
-/* ===================== queue ===================== */
-const STEPS = ['Sending video', 'Instagram processing', 'Publishing'];
+/* ===================== queue: lanes ===================== */
+const STEPS = ['Sending', 'Processing', 'Publishing'];
 function stepper(step) {
   const at = { processing: 1, publishing: 2 }[step] ?? 0;
   return `<div class="stepper">${STEPS.map((l, i) => `<span class="${i < at ? 'done' : i === at ? 'now' : ''}">${i < at ? '✓ ' : ''}${l}</span>`).join('')}</div>`;
@@ -776,7 +875,7 @@ function humanError(raw = '') {
   if (r.includes('decrypt') || r.includes('"code":190') || r.includes('access token') || r.includes('session has expired')) return 'The Instagram connection expired. Ask Ritwik to reconnect it, then press Try again.';
   if (r.includes('tunnel') || r.includes('public media link') || r.includes('video_url')) return "Instagram couldn't fetch the video. Press Try again. If it fails twice, send Ritwik the details below.";
   if (r.includes('processing failed')) return "Instagram couldn't process this video. Export it again as MP4 (H.264, AAC audio), vertical 9:16, and add it again.";
-  if (r.includes('timed out')) return 'Instagram took more than 10 minutes to process this video. Press Try again. If it fails twice, export a smaller file.';
+  if (r.includes('timed out')) return 'Instagram took too long to process this video. Press Try again. If it fails twice, export a smaller file.';
   if (r.includes('limit') || r.includes('quota')) return 'The daily limit of 100 posts was reached. Try again later.';
   if (r.includes('aspect') || r.includes('duration') || r.includes('format')) return "Instagram didn't accept this video's format. Export it as a vertical MP4, 3 seconds to 15 minutes.";
   return 'Something went wrong while posting. Press Try again. If it keeps failing, send Ritwik the details below.';
@@ -785,52 +884,53 @@ async function loadJobs() {
   try { jobs = (await call('/api/jobs').then(r => r.json())).jobs; } catch { return; }
   renderQueue();
 }
-function jobRow(j) {
+function jobTile(j) {
   const when = new Date(j.posted_at || j.run_at);
   const cap = esc((j.caption || '').split('\n')[0] || '(no caption)');
-  const thumb = `<video src="${mediaUrl(j.file, (j.thumb_offset_ms || 0) / 1000)}" muted preload="metadata"></video>`;
+  const thumb = j.video_deleted ? '<video muted></video>' : `<video src="${mediaUrl(j.file, (j.thumb_offset_ms || 0) / 1000)}" muted preload="metadata"></video>`;
   let status = '', acts = '';
   if (j.state === 'queued') {
     if (when <= Date.now()) {
-      status = `<div class="s"><span class="spin"></span> Starting in a few seconds…</div>${stepper('')}`;
+      status = `<div class="s"><span class="spin"></span> Starting…</div>${stepper('')}`;
       acts = `<button class="btn small danger" data-a="cancel">Cancel</button>`;
     } else {
-      status = `<div class="s">Posts ${esc(fmtWhen(when))} · ${relTime(when)}</div>`;
+      status = `<div class="s">${esc(fmtWhen(when))}<br><b style="color:var(--jal)">${relTime(when)}</b></div>`;
       acts = `<button class="btn small secondary" data-a="postnow">Post now</button><button class="btn small secondary" data-a="edit">Change time</button><button class="btn small danger" data-a="cancel">Cancel</button>`;
     }
   } else if (j.state === 'posting') {
-    status = `<div class="s"><span class="spin"></span> Posting now. Usually 1 to 3 minutes.</div>${stepper(j.step)}`;
+    status = `<div class="s"><span class="spin"></span> 1 to 3 minutes</div>${stepper(j.step)}`;
   } else if (j.state === 'failed') {
     status = `<div class="err">${esc(humanError(j.error))}<details><summary>Details for Ritwik</summary>${esc(j.error)}</details></div>`;
     acts = `<button class="btn small primary" data-a="retry">Try again</button>`;
   } else if (j.state === 'posted') {
-    status = `<div class="s" style="color:var(--ok)">✓ Live since ${esc(fmtWhen(when))}</div>
-      <div class="help">Insights, comments and the after-posting checklist are in <b>All reels &amp; insights</b>.</div>`;
-    acts = `<button class="btn small secondary" data-a="insights">See insights</button>` +
-           (j.permalink ? `<a class="btn small secondary" href="${esc(j.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">View on Instagram ↗</a>` : '');
+    const ago = Math.round((Date.now() - when) / 60000);
+    status = `<div class="s" style="color:var(--ok)">✓ Live · ${ago < 1 ? 'just now' : esc(fmtRel(ago)) + ' ago'}</div>`;
+    acts = (j.media_id ? `<button class="btn small secondary" data-a="insights">Insights</button>` : '') +
+           (j.permalink ? `<a class="btn small secondary" href="${esc(j.permalink)}" target="_blank" rel="noopener">Instagram ↗</a>` : '');
   } else if (j.state === 'cancelled') {
     status = `<div class="s">Cancelled. Nothing was posted.</div>`;
   }
   return `<div class="job ${j.state}" data-id="${j.id}">${thumb}
-    <div style="min-width:0"><div class="t">${cap}</div>
-      <div class="s" style="font-size:13px">${esc(gradLabel(j.graduation))}${j.comments_off ? ' · comments off' : ''}</div>
+    <div style="min-width:0"><div class="t" title="${cap}">${cap}</div>
+      <div class="s" style="font-size:12px">${esc(gradLabel(j.graduation))}${j.comments_off ? ' · comments off' : ''}</div>
       ${status}<div data-r="edit"></div></div>
-    <div class="acts">${acts}</div></div>`;
+    ${acts ? `<div class="acts">${acts}</div>` : ''}</div>`;
 }
 function renderQueue() {
   updateCounts();
   if (document.querySelector('#queue .reschedule')) return;   // don't redraw while a time is being edited
-  const by = s => jobs.filter(j => j.state === s);
-  const groups = [
-    ['Needs attention', by('failed').reverse()],
-    ['Posting now', [...by('posting'), ...by('queued').filter(j => new Date(j.run_at) <= Date.now())]],
-    ['Scheduled', by('queued').filter(j => new Date(j.run_at) > Date.now()).sort((a, b) => new Date(a.run_at) - new Date(b.run_at))],
-    ['Live on Instagram', by('posted').sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at)).slice(0, 30)],
-    ['Cancelled', by('cancelled').slice(-10).reverse()],
-  ].filter(([, l]) => l.length);
-  const html = groups.length
-    ? groups.map(([t, l]) => `<div class="group"><h3>${t} (${l.length})</h3>${l.map(jobRow).join('')}</div>`).join('')
-    : `<div class="empty"><b style="color:var(--bone)">Nothing queued yet.</b><br>Reels you queue from the "New reels" tab show up here with their status.</div>`;
+  const by = s => jobs.filter(j => j.state === s), due = j => new Date(j.run_at) <= Date.now();
+  const lanes = [
+    ['Needs attention', 'bad', by('failed').reverse(), 'Nothing failed. 🎉'],
+    ['Up next', 'warn', by('queued').filter(j => !due(j)).sort((a, b) => new Date(a.run_at) - new Date(b.run_at)), 'Nothing scheduled. Queue reels from New.'],
+    ['Posting', 'warn', [...by('posting'), ...by('queued').filter(due)], 'Nothing posting right now.'],
+    ['Live', 'ok', by('posted').sort((a, b) => new Date(b.posted_at) - new Date(a.posted_at)).slice(0, 30), 'Reels appear here once they’re on Instagram.'],
+  ];
+  if (showCancelled) lanes.push(['Cancelled', '', by('cancelled').slice(-20).reverse(), 'Nothing cancelled.']);
+  $('queue').style.gridTemplateColumns = innerWidth > 860 ? `repeat(${lanes.length}, minmax(250px, 1fr))` : '';
+  const html = lanes.map(([t, k, l, empty]) => `<section class="lane" aria-label="${t}">
+      <div class="lane-h"><span class="dot ${k}"></span>${t}<span class="n">${l.length}</span></div>
+      <div class="lane-b">${l.length ? l.map(jobTile).join('') : `<div class="lane-empty">${empty}</div>`}</div></section>`).join('');
   if ($('queue').dataset.html !== html) { $('queue').innerHTML = html; $('queue').dataset.html = html; }
 }
 function updateCounts() {
@@ -844,16 +944,17 @@ async function act(path, body) {
   catch (e) { if (e.message !== 'login') toast("Can't reach the posting service. Nothing changed, try again in a minute."); }
   await loadJobs();
 }
+$('showCancelled').onclick = e => { showCancelled = !showCancelled; e.target.setAttribute('aria-pressed', showCancelled); e.target.textContent = showCancelled ? 'Hide cancelled' : 'Show cancelled'; renderQueue(); };
 $('queue').addEventListener('click', async e => {
   const b = e.target.closest('[data-a]'); if (!b) return;
   const row = b.closest('.job'), id = row.dataset.id, j = jobs.find(x => x.id === id), a = b.dataset.a;
-  if (a === 'insights') { showTab('reels'); return; }
+  if (a === 'insights') { showTab('library'); openReel(j.media_id); return; }
   if (a === 'cancel' && confirm('Cancel this reel? It will not be posted.')) { await act('/api/cancel', { id }); toast('Cancelled. Nothing was posted.'); }
   if (a === 'postnow' && confirm('Post this reel to Instagram now?')) { await act('/api/postnow', { id }); toast('Posting within a minute'); }
   if (a === 'retry' && confirm(j.error?.includes('Interrupted') ? 'Did you check Instagram? If the reel is already live, trying again will post it twice.' : 'Try posting this reel again now?')) { await act('/api/retry', { id }); toast('Trying again'); }
   if (a === 'edit') {
     row.querySelector('[data-r=edit]').innerHTML = `<div class="reschedule"><input type="datetime-local" value="${toLocalInput(new Date(j.run_at))}" min="${toLocalInput(new Date())}" aria-label="New date and time">
-      <button class="btn small primary" data-a="save">Save time</button><button class="btn small secondary" data-a="close">Keep current time</button></div>`;
+      <button class="btn small primary" data-a="save">Save</button><button class="btn small secondary" data-a="close">Keep</button></div>`;
   }
   if (a === 'close') { row.querySelector('[data-r=edit]').innerHTML = ''; renderQueue(); }
   if (a === 'save') {
@@ -863,15 +964,16 @@ $('queue').addEventListener('click', async e => {
     await act('/api/reschedule', { id, run_at: d.toISOString() }); toast(`Moved to ${fmtWhen(d)}`);
   }
 });
-/* ===================== all reels & insights ===================== */
-const reels = { list: [], after: null, loaded: false, filter: 'all', sort: 'new', dir: -1, view: store.get('reelsView', 'table'), fetchedAt: 0, open: null };
+
+/* ===================== library: content wall + inspector ===================== */
+const reels = { list: [], after: null, loaded: false, loading: false, filter: 'all', sort: 'new', dir: -1,
+                view: store.get('libView', 'wall'), lens: store.get('lens', 'views'), fetchedAt: 0, open: null, pendingOpen: null };
 const TASK_INFO = {
   shared_to_followers: ['Share to followers', 'Only for trial reels you want everyone to see. In the Instagram app, open the reel and tap "Share to followers".'],
   likes_hidden: ['Hide like count', 'In the Instagram app, open the reel, tap ⋯ and choose "Hide like count". The same menu has "Unhide like count".'],
   translations: ['Translations', 'In the Instagram app, open the reel, tap ⋯ and look for Translations. Instagram only offers it on some reels and in some regions.'],
 };
 const MIN_REACH = 100;
-// Column / metric definitions: value getter, formatter, whether it's compared with the account median
 const pct = x => x == null ? '–' : (x * 100).toFixed(x < 0.01 ? 2 : 1) + '%';
 const fmtNum = n => n == null ? '–' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n));
 const fmtSec = ms => ms == null ? '–' : (ms / 1000).toFixed(1) + ' s';
@@ -879,15 +981,15 @@ const fmtHours = ms => ms == null ? '–' : ms >= 3600e3 ? (ms / 3600e3).toFixed
 const per = (m, k) => m && m.reach ? (m[k] ?? 0) / m.reach : null;
 const COLS = [
   { k: 'new',      label: 'Posted',          get: r => Date.parse(r.timestamp) },
-  { k: 'views',    label: 'Views',           get: r => r.insights?.views, fmt: fmtNum, bench: true },
+  { k: 'views',    label: 'Views',           get: r => r.insights?.views, fmt: fmtNum, bench: true, lens: true },
   { k: 'reach',    label: 'Reached',         get: r => r.insights?.reach, fmt: fmtNum, bench: true },
-  { k: 'watch',    label: 'Avg watch',       get: r => r.insights?.ig_reels_avg_watch_time, fmt: fmtSec, bench: true, cmp: true },
+  { k: 'watch',    label: 'Avg watch',       get: r => r.insights?.ig_reels_avg_watch_time, fmt: fmtSec, bench: true, cmp: true, lens: true },
   { k: 'vpp',      label: 'Views / person',  get: r => per(r.insights, 'views'), fmt: x => x == null ? '–' : x.toFixed(2), cmp: true },
   { k: 'like',     label: 'Like %',          get: r => per(r.insights, 'likes'), fmt: pct, bench: true, cmp: true },
   { k: 'comment',  label: 'Comment %',       get: r => per(r.insights, 'comments'), fmt: pct, cmp: true },
-  { k: 'share',    label: 'Share %',         get: r => per(r.insights, 'shares'), fmt: pct, bench: true, cmp: true },
+  { k: 'share',    label: 'Share %',         get: r => per(r.insights, 'shares'), fmt: pct, bench: true, cmp: true, lens: true },
   { k: 'save',     label: 'Save %',          get: r => per(r.insights, 'saved'), fmt: pct, bench: true, cmp: true },
-  { k: 'eng',      label: 'Engagement %',    get: r => per(r.insights, 'total_interactions'), fmt: pct, bench: true, cmp: true },
+  { k: 'eng',      label: 'Engagement %',    get: r => per(r.insights, 'total_interactions'), fmt: pct, bench: true, cmp: true, lens: true },
 ];
 const col = k => COLS.find(c => c.k === k);
 const median = xs => { const a = xs.filter(x => x != null && !isNaN(x)).sort((p, q) => p - q); if (!a.length) return null; const h = a.length >> 1; return a.length % 2 ? a[h] : (a[h - 1] + a[h]) / 2; };
@@ -897,28 +999,27 @@ function computeMedians() {
   medians = Object.fromEntries(COLS.filter(c => c.fmt).map(c => [c.k, median(base.map(c.get))]));
   medians._n = base.length;
 }
-function vsMedian(c, r) {      // ▲ / ▼ marker against this account's usual
+function vsMedian(c, r) {      // ▲ / ▼ against this account's usual
   const v = c.get(r), md = medians[c.k];
   if (!c.cmp || v == null || !md || (r.insights?.reach || 0) < MIN_REACH) return '';
   const ratio = v / md;
   return ratio >= 1.25 ? ' <span class="up" title="' + Math.round((ratio - 1) * 100) + '% above usual">▲</span>'
        : ratio <= 0.75 ? ' <span class="down" title="' + Math.round((1 - ratio) * 100) + '% below usual">▼</span>' : '';
 }
-const badgeFor = r => r.trial === 'yes' ? `<span class="badge trial">Trial${r.graduation === 'SS_PERFORMANCE' ? ' · auto-share' : ''}</span>`
-  : r.trial === 'maybe' ? `<span class="badge maybe" title="Not on the profile grid">Probably trial</span>` : `<span class="badge">On grid</span>`;
+const badgeFor = r => r.trial === 'yes' ? `<span class="badge trial">Trial${r.graduation === 'SS_PERFORMANCE' ? ' · auto' : ''}</span>`
+  : r.trial === 'maybe' ? `<span class="badge maybe" title="Not on the profile grid">Prob. trial</span>` : `<span class="badge">Grid</span>`;
 const taskKeys = r => r.trial === 'no' ? ['likes_hidden', 'translations'] : ['shared_to_followers', 'likes_hidden', 'translations'];
-function todoChip(r) {
-  const keys = taskKeys(r), left = keys.filter(k => !r.tasks?.[k]).length;
-  return left ? `<span class="todo-chip" title="Things to do in the Instagram app">${left} to do</span>` : `<span class="todo-chip done">✓ done</span>`;
-}
+const todoLeft = r => taskKeys(r).filter(k => !r.tasks?.[k]).length;
 const thumb = r => r.thumbnail_url ? `<img src="${esc(r.thumbnail_url)}" alt="" loading="lazy">` : '<div class="noimg"></div>';
+const firstLine = r => esc((r.caption || '').split('\n')[0] || '(no caption)');
 
-// sort dropdown mirrors the table headers
-$('reelSort').innerHTML = COLS.map(c => `<option value="${c.k}">${c.k === 'new' ? 'Newest first' : 'Highest ' + c.label}</option>`).join('');
+$('reelSort').innerHTML = COLS.map(c => `<option value="${c.k}">${c.k === 'new' ? 'Newest first' : 'Sort: ' + c.label}</option>`).join('');
+$('lensChips').innerHTML = COLS.filter(c => c.lens).map(c => `<button data-lens="${c.k}" aria-pressed="${c.k === reels.lens}" title="Show ${c.label} on every reel">${c.label}</button>`).join('');
 
 async function loadReels(more, refresh) {
-  $('reelsRefresh').disabled = true;
-  if (!more) $('reels-list').innerHTML = `<div class="empty"><span class="spin"></span> Loading reels and insights from Instagram…</div>`;
+  if (reels.loading) return;
+  reels.loading = true; $('reelsRefresh').disabled = true;
+  if (!more) $('reels-list').innerHTML = `<div class="wall">${Array.from({ length: 12 }, () => '<div class="tile" style="opacity:.35"></div>').join('')}</div>`;
   try {
     const qs = new URLSearchParams({ ...(more && reels.after ? { after: reels.after } : {}), ...(refresh ? { refresh: '1' } : {}) });
     const r = await call('/api/reels?' + qs).then(r => r.json());
@@ -928,100 +1029,142 @@ async function loadReels(more, refresh) {
     if (refresh) toast('Numbers refreshed from Instagram');
   } catch (e) {
     if (e.message !== 'login') $('reels-list').innerHTML = `<div class="empty" style="color:var(--bad)">Couldn't load reels from Instagram. ${esc(humanError(e.message))}</div>`;
-    $('reelsRefresh').disabled = false; return;
+    reels.loading = false; $('reelsRefresh').disabled = false; return;
   }
-  $('reelsRefresh').disabled = false;
+  reels.loading = false; $('reelsRefresh').disabled = false;
+  if (reels.pendingOpen) { const id = reels.pendingOpen; reels.pendingOpen = null; openReel(id); }
   renderReels();
 }
-
+function visibleList() {
+  const c = col(reels.sort);
+  return reels.list.filter(r => reels.filter === 'all' || (reels.filter === 'trial' ? r.trial !== 'no' : r.trial === 'no'))
+    .sort((a, b) => { const x = c.get(a), y = c.get(b); if (x == null || y == null) return (x == null) - (y == null); return (y - x) * -reels.dir; });
+}
 function renderReels() {
   computeMedians();
-  // benchmarks strip
-  $('bench').innerHTML = medians._n ? COLS.filter(c => c.bench).map(c => `<div><b>${c.fmt(medians[c.k])}</b><span>Usual ${c.label.toLowerCase()}</span></div>`).join('') : '';
-  $('legend').innerHTML = medians._n
-    ? `<span>"Usual" = median of ${medians._n} reels that reached ${MIN_REACH}+ accounts</span><span><span class="up">▲</span> 25%+ better than usual</span><span><span class="down">▼</span> 25%+ worse</span><span class="lowreach">Faded = under ${MIN_REACH} reached</span>`
+  $('bench').innerHTML = medians._n
+    ? `<span>Usual for this account (median of ${medians._n} reels with ${MIN_REACH}+ reach):</span>` + COLS.filter(c => c.bench).map(c => `<span>${c.label} <b>${c.fmt(medians[c.k])}</b></span>`).join('') + `<span><span class="up">▲</span>/<span class="down">▼</span> = 25%+ above/below usual</span>`
     : '';
-  const c = col(reels.sort);
-  let list = reels.list.filter(r => reels.filter === 'all' || (reels.filter === 'trial' ? r.trial !== 'no' : r.trial === 'no'));
-  list = [...list].sort((a, b) => {      // reels.dir -1 = highest first; missing values always last
-    const x = c.get(a), y = c.get(b);
-    if (x == null || y == null) return (x == null) - (y == null);
-    return (y - x) * -reels.dir;
-  });
+  const list = visibleList(), lens = col(reels.lens);
   $('reelSort').value = reels.sort;
-  document.querySelectorAll('.seg [data-v]').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === reels.view));
+  document.querySelectorAll('[data-v]').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === reels.view));
+  document.querySelectorAll('[data-lens]').forEach(x => x.setAttribute('aria-pressed', x.dataset.lens === reels.lens));
+  document.querySelectorAll('[data-f]').forEach(x => x.setAttribute('aria-pressed', x.dataset.f === reels.filter));
   if (!list.length) {
-    $('reels-list').innerHTML = `<div class="empty">No reels match this filter${reels.after ? ' yet. Try "Load older reels".' : '.'}</div>`;
+    $('reels-list').innerHTML = `<div class="empty">No reels match this filter${reels.after ? ' yet. Scroll or load older reels.' : '.'}</div>`;
   } else if (reels.view === 'table') {
     $('reels-list').innerHTML = `<div class="tablewrap"><table class="reels"><thead><tr>
       ${COLS.map(c => `<th data-sort="${c.k}" ${reels.sort === c.k ? `aria-sort="${reels.dir < 0 ? 'descending' : 'ascending'}"` : ''} scope="col">${c.k === 'new' ? 'Reel' : c.label}</th>`).join('')}
-      <th scope="col" style="cursor:default">In-app to-do</th></tr></thead><tbody>
-      ${list.map(r => `<tr data-id="${esc(r.id)}" class="${(r.insights?.reach || 0) < MIN_REACH ? 'lowreach' : ''}" tabindex="0">
-        <td><div class="rcell">${thumb(r)}<div style="min-width:0"><div class="t">${esc((r.caption || '').split('\n')[0] || '(no caption)')}</div>
-          <div class="d">${esc(new Date(r.timestamp).toLocaleDateString([], { day: 'numeric', month: 'short' }))} ${badgeFor(r)}</div></div></div></td>
+      <th scope="col" style="cursor:default">To do</th></tr></thead><tbody>
+      ${list.map(r => `<tr data-id="${esc(r.id)}" class="${(r.insights?.reach || 0) < MIN_REACH ? 'lowreach' : ''}" aria-selected="${r.id === reels.open}" tabindex="0">
+        <td><div class="rcell">${thumb(r)}<div style="min-width:0"><div class="t">${firstLine(r)}</div>
+          <div class="help" style="margin:0;font-size:12px">${esc(new Date(r.timestamp).toLocaleDateString([], { day: 'numeric', month: 'short' }))} ${badgeFor(r)}</div></div></div></td>
         ${COLS.slice(1).map(c => `<td>${c.fmt(c.get(r))}${vsMedian(c, r)}</td>`).join('')}
-        <td>${todoChip(r)}</td></tr>`).join('')}
+        <td>${todoLeft(r) ? `<span style="color:var(--warn)">${todoLeft(r)}</span>` : '<span style="color:var(--ok)">✓</span>'}</td></tr>`).join('')}
       </tbody></table></div>`;
   } else {
-    $('reels-list').innerHTML = `<div class="cards">${list.map(r => `
-      <article class="rcard ${(r.insights?.reach || 0) < MIN_REACH ? 'lowreach' : ''}" data-id="${esc(r.id)}" tabindex="0">
-        <div class="top">${thumb(r)}<div style="min-width:0"><div class="t">${esc((r.caption || '').split('\n')[0] || '(no caption)')}</div>
-          <div class="help" style="margin:4px 0">${esc(fmtWhen(new Date(r.timestamp)))}</div><div style="display:flex;gap:6px;flex-wrap:wrap">${badgeFor(r)} ${todoChip(r)}</div></div></div>
-        <div class="mini">${['views', 'watch', 'eng', 'like', 'share', 'save'].map(k => { const c = col(k); return `<div><b>${c.fmt(c.get(r))}${vsMedian(c, r)}</b><span>${c.label}</span></div>`; }).join('')}</div>
-      </article>`).join('')}</div>`;
+    $('reels-list').innerHTML = `<div class="wall" role="listbox" aria-label="Reels">${list.map(r => {
+      const left = todoLeft(r), low = (r.insights?.reach || 0) < MIN_REACH;
+      return `<button class="tile ${low ? 'lowreach' : ''}" data-id="${esc(r.id)}" role="option" aria-selected="${r.id === reels.open}" title="${firstLine(r)}">
+        ${thumb(r)}
+        <div class="tl">${badgeFor(r)}<span class="todo ${left ? '' : 'done'}" title="${left ? left + ' to do in the Instagram app' : 'In-app checklist done'}">${left || '✓'}</span></div>
+        <div class="ov">
+          <div class="lens">${lens.fmt(lens.get(r))}${vsMedian(lens, r)}<small>${lens.label}${low ? ' · under ' + MIN_REACH + ' reached' : ''}</small></div>
+          <div class="more">${['views', 'watch', 'share', 'eng'].filter(k => k !== reels.lens).slice(0, 3).map(k => { const c = col(k); return `<span>${c.label} <b>${c.fmt(c.get(r))}</b></span>`; }).join('')}</div>
+          <div class="date">${esc(new Date(r.timestamp).toLocaleDateString([], { day: 'numeric', month: 'short' }))}</div>
+        </div></button>`; }).join('')}</div>`;
   }
   $('reelsMore').hidden = !reels.after;
-  $('reelsUpdated').textContent = reels.fetchedAt ? `${reels.list.length} reels · loaded ${new Date(reels.fetchedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : '';
-  if (reels.open && $('reelDlg').open) renderDetail(reels.open);
+  $('reelsUpdated').textContent = reels.fetchedAt ? `${reels.list.length} reels · ${new Date(reels.fetchedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : '';
+  renderInspector();
 }
 
-function renderDetail(id) {
-  const r = reels.list.find(x => x.id === id); if (!r) return;
-  reels.open = id;
-  const m = r.insights || {}, low = (m.reach || 0) < MIN_REACH;
-  $('reelDlgTitle').textContent = 'reel details';
-  $('reelDlgSub').innerHTML = `Posted ${esc(fmtWhen(new Date(r.timestamp)))} · ${badgeFor(r)}${m.fetched ? ` · numbers from ${esc(new Date(m.fetched).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}` : ''}`;
-  const box = (c, extra = '') => `<div class="metric"><b>${c.fmt(c.get(r))}${vsMedian(c, r)}</b><span>${c.label}${medians[c.k] != null && c.cmp ? ` <small>usual ${c.fmt(medians[c.k])}</small>` : ''}${extra}</span></div>`;
+function renderInspector() {
+  const box = $('inspector'), r = reels.list.find(x => x.id === reels.open);
+  box.classList.toggle('open', !!r);
+  if (!r) {   // overview: best performers, what the numbers mean
+    const ranked = c => [...reels.list].filter(x => (x.insights?.reach || 0) >= MIN_REACH && c.get(x) != null).sort((a, b) => c.get(b) - c.get(a)).slice(0, 3);
+    const top = (k) => { const c = col(k), l = ranked(c); return l.length ? `<div class="dgroup">Top by ${c.label}</div><div class="toprank">${l.map(x => `<button data-open="${esc(x.id)}">${thumb(x)}<span class="t">${firstLine(x)}</span><b>${c.fmt(c.get(x))}</b></button>`).join('')}</div>` : ''; };
+    box.innerHTML = `<div class="insp-inner">
+      <h2 style="font-size:22px">overview</h2>
+      <p class="help" style="margin-top:4px">Click any reel to see everything about it. <kbd>←</kbd> <kbd>→</kbd> move between reels.</p>
+      ${reels.loaded ? top('share') + top('watch') + top('views') : '<p class="help"><span class="spin"></span> Loading…</p>'}
+      <div class="dgroup">What the numbers mean</div>
+      <div class="explain">
+        <p><b>Rates are per account reached.</b> Like % = likes ÷ accounts reached; same for Comment, Share and Save %. Engagement % = all four together ÷ reached. <b>Views per person</b> above 1.0 means rewatches.</p>
+        <p><b>▲ / ▼</b> compare with this account's median. Reels under ${MIN_REACH} reached are faded and left out, because a few people swing the rates a lot.</p>
+        <p><b>Trial</b> = posted from this app as a trial. <b>Prob. trial</b> = not on the profile grid (Instagram doesn't tell apps which reels are trials).</p>
+      </div></div>`;
+    return;
+  }
+  const m = r.insights || {}, low = (m.reach || 0) < MIN_REACH, list = visibleList(), idx = list.findIndex(x => x.id === r.id);
+  const metric = c => `<div class="metric"><b>${c.fmt(c.get(r))}${vsMedian(c, r)}</b><span>${c.label}${medians[c.k] != null && c.cmp ? ` <small>usual ${c.fmt(medians[c.k])}</small>` : ''}</span></div>`;
   const count = (v, label) => `<div class="metric"><b>${fmtNum(v)}</b><span>${label}</span></div>`;
-  $('reelDlgBody').innerHTML = `<div class="detail">${thumb(r)}<div style="min-width:0">
-    <div style="white-space:pre-wrap;font-size:14px;max-height:120px;overflow:auto">${esc(r.caption || '(no caption)')}</div>
-    ${m.error ? `<div class="msg warn" style="margin-top:10px">Insights unavailable for this reel: ${esc(humanError(m.error))}</div>` : `
-    ${low ? `<div class="msg warn" style="margin-top:10px">Only ${m.reach || 0} accounts reached so far. Rates will move a lot as more people see it.</div>` : ''}
+  box.innerHTML = `<div class="insp-inner">
+    <div class="insp-nav">
+      <button class="iconbtn" data-step="-1" title="Previous (←)" ${idx <= 0 ? 'disabled' : ''}>←</button>
+      <button class="iconbtn" data-step="1" title="Next (→)" ${idx < 0 || idx >= list.length - 1 ? 'disabled' : ''}>→</button>
+      <span class="help" style="margin:0">${idx + 1} of ${list.length}</span>
+      <span style="flex:1"></span>
+      <button class="iconbtn" data-close title="Close (Esc)">✕</button>
+    </div>
+    <div class="insp-top">${thumb(r)}<div style="min-width:0">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${badgeFor(r)}<span class="chip">${esc(fmtWhen(new Date(r.timestamp)))}</span></div>
+      <div class="insp-cap">${esc(r.caption || '(no caption)')}</div>
+      <a class="btn small secondary" style="margin-top:8px" href="${esc(r.permalink)}" target="_blank" rel="noopener">Open in Instagram ↗</a>
+    </div></div>
+    ${m.error ? `<div class="msg warn" style="margin-top:12px">Insights unavailable for this reel: ${esc(humanError(m.error))}</div>` : `
+    ${low ? `<div class="msg warn" style="margin-top:12px">Only ${m.reach || 0} accounts reached so far. Rates will move a lot as more people see it.</div>` : ''}
     <div class="dgroup">Reach &amp; watching</div>
-    <div class="metrics">${box(col('views'))}${box(col('reach'))}${box(col('watch'))}${box(col('vpp'))}
+    <div class="metrics">${metric(col('views'))}${metric(col('reach'))}${metric(col('watch'))}${metric(col('vpp'))}</div>
+    <div class="dgroup">Rates per account reached</div>
+    <div class="metrics">${metric(col('eng'))}${metric(col('share'))}${metric(col('like'))}${metric(col('save'))}${metric(col('comment'))}
       <div class="metric"><b>${fmtHours(m.ig_reels_video_view_total_time)}</b><span>Total watch time</span></div></div>
-    <div class="dgroup">Rates (per account reached)</div>
-    <div class="metrics">${box(col('eng'))}${box(col('like'))}${box(col('share'))}${box(col('save'))}${box(col('comment'))}</div>
     <div class="dgroup">Counts</div>
     <div class="metrics">${count(m.likes, 'Likes')}${count(m.comments, 'Comments')}${count(m.shares, 'Shares')}${count(m.saved, 'Saves')}</div>`}
-    <div class="dgroup">Actions</div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-      <label class="switch" style="align-items:center"><input type="checkbox" data-act="comments" ${r.is_comment_enabled !== false ? 'checked' : ''}><span style="font-size:14px"><b>Comments ${r.is_comment_enabled !== false ? 'on' : 'off'}</b> <span class="help">(changes it on Instagram)</span></span></label>
-      <a class="btn small secondary" href="${esc(r.permalink)}" target="_blank" rel="noopener" style="text-decoration:none">Open in Instagram ↗</a>
-    </div>
+    <div class="dgroup">On Instagram</div>
+    <label class="switch" style="align-items:center"><input type="checkbox" data-act="comments" ${r.is_comment_enabled !== false ? 'checked' : ''}><span style="font-size:14px"><b>Comments ${r.is_comment_enabled !== false ? 'on' : 'off'}</b> <span class="help">(changes it on Instagram)</span></span></label>
     <div class="dgroup">Do in the Instagram app</div>
-    <div class="help" style="margin:0 0 4px">Instagram doesn't let apps do these. Tick each one when it's done; the whole team sees the ticks.</div>
+    <div class="help" style="margin:0 0 4px">Instagram doesn't let apps do these. Tick each one when done; the whole team sees the ticks.</div>
     ${taskKeys(r).map(k => { const done = r.tasks?.[k]; return `<label class="task"><input type="checkbox" data-task="${k}" ${done ? 'checked' : ''}>
       <span><b>${TASK_INFO[k][0]}</b>${done ? ` <small style="display:inline;color:var(--ok)">done ${esc(fmtWhen(new Date(done)))}</small>` : ''}<small>${TASK_INFO[k][1]}</small></span></label>`; }).join('')}
-  </div></div>`;
+  </div>`;
 }
-function openDetail(id) { renderDetail(id); if (!$('reelDlg').open) $('reelDlg').showModal(); }
-$('reelDlg').addEventListener('close', () => { reels.open = null; });
+function openReel(id) {
+  if (!id) return;
+  if (!reels.list.find(x => x.id === id)) { reels.pendingOpen = id; if (!reels.loading) loadReels(); return; }
+  reels.open = id; renderReels();
+  document.querySelector(`#reels-list [data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+function closeInspector() { reels.open = null; renderReels(); }
+function stepReel(dir) {
+  const list = visibleList(); if (!list.length) return;
+  const i = list.findIndex(x => x.id === reels.open);
+  const n = list[i < 0 ? 0 : Math.min(list.length - 1, Math.max(0, i + dir))];
+  openReel(n.id);
+  if (i >= list.length - 3 && reels.after) loadReels(true);
+}
 
-document.querySelectorAll('.seg [data-f]').forEach(b => b.onclick = () => {
-  reels.filter = b.dataset.f; document.querySelectorAll('.seg [data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderReels();
-});
-document.querySelectorAll('.seg [data-v]').forEach(b => b.onclick = () => { reels.view = b.dataset.v; store.set('reelsView', reels.view); renderReels(); });
+document.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { reels.filter = b.dataset.f; renderReels(); });
+document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { reels.view = b.dataset.v; store.set('libView', reels.view); renderReels(); });
+$('lensChips').onclick = e => { const b = e.target.closest('[data-lens]'); if (!b) return; reels.lens = b.dataset.lens; store.set('lens', reels.lens); renderReels(); };
 $('reelSort').onchange = e => { reels.sort = e.target.value; reels.dir = -1; renderReels(); };
 $('reelsRefresh').onclick = () => loadReels(false, true);
 $('reelsMore').onclick = () => loadReels(true);
+new IntersectionObserver(es => { if (es.some(e => e.isIntersecting) && reels.loaded && reels.after && currentTab === 'library') loadReels(true); },
+  { root: $('libScroll'), rootMargin: '400px' }).observe($('reelsSentinel'));
 $('reels-list').addEventListener('click', e => {
   const th = e.target.closest('th[data-sort]');
   if (th) { const k = th.dataset.sort; reels.dir = reels.sort === k ? -reels.dir : -1; reels.sort = k; return renderReels(); }
-  const row = e.target.closest('[data-id]'); if (row) openDetail(row.dataset.id);
+  const row = e.target.closest('[data-id]'); if (row) row.dataset.id === reels.open ? closeInspector() : openReel(row.dataset.id);
 });
-$('reels-list').addEventListener('keydown', e => { const row = e.target.closest('[data-id]'); if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(row.dataset.id); } });
-$('reelDlgBody').addEventListener('change', async e => {
+$('reels-list').addEventListener('keydown', e => { const row = e.target.closest('tr[data-id]'); if (row && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openReel(row.dataset.id); } });
+$('inspector').addEventListener('click', e => {
+  const s = e.target.closest('[data-step]'); if (s) return stepReel(+s.dataset.step);
+  if (e.target.closest('[data-close]')) return closeInspector();
+  const o = e.target.closest('[data-open]'); if (o) openReel(o.dataset.open);
+});
+$('inspector').addEventListener('change', async e => {
   const id = reels.open, r = reels.list.find(x => x.id === id); if (!r) return;
   if (e.target.dataset.act === 'comments') {
     const on = e.target.checked;
@@ -1044,17 +1187,20 @@ $('reelDlgBody').addEventListener('change', async e => {
 
 /* ===================== boot ===================== */
 window.addEventListener('beforeunload', e => { if (drafts.length) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('resize', () => { $('queue').dataset.html = ''; renderQueue(); });
 let booted = false;
 async function boot() {
   await findEngine();
+  showTab(store.get('view', 'library'));
+  renderInspector();
   if (!session && !LOCAL) return askLogin();
   await loadAccount(); await loadJobs();
-  if (session && !$('loginDlg').open && !store.get('seenHelp', false)) { $('helpDlg').showModal(); store.set('seenHelp', true); }
+  if (currentTab === 'library' && !reels.loaded) loadReels();
+  if (session && !$('loginDlg').open && !store.get('seenHelp2', false)) { $('helpDlg').showModal(); store.set('seenHelp2', true); }
   if (!booted) { booted = true; setInterval(loadJobs, 4000); setInterval(loadAccount, 60000); }
 }
 boot();
 setInterval(() => drafts.forEach((d, i) => { const el = document.querySelector(`.card[data-key="${d.key}"]`); if (el) refreshCard(d, el, i); }), 30000);
-
 </script>
 </body>
 </html>
